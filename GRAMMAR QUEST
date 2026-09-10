@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文法闖關：TOEIC 句型大冒險</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep: #14133B;
+    --bg-panel: #1E1B5E;
+    --bg-panel-2: #262277;
+    --coral: #FF6B6B;
+    --gold: #FFC93C;
+    --teal: #4ECDC4;
+    --text-light: #F5F3FF;
+    --text-muted: #A9A6D9;
+    --line: rgba(245,243,255,0.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: radial-gradient(circle at 20% 0%, #201D6B 0%, var(--bg-deep) 55%);
+    color: var(--text-light);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 28px 16px 60px;
+  }
+  h1,h2,h3, .display{
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    margin: 0;
+  }
+  .stars-dust{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:
+      radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,.5), transparent),
+      radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,.4), transparent),
+      radial-gradient(1.5px 1.5px at 50% 70%, rgba(255,255,255,.35), transparent),
+      radial-gradient(1.5px 1.5px at 30% 85%, rgba(255,255,255,.3), transparent),
+      radial-gradient(2px 2px at 90% 60%, rgba(255,255,255,.4), transparent);
+    background-repeat: no-repeat;
+    opacity:.6;
+  }
+  .app{ width: 100%; max-width: 640px; position:relative; z-index:1; }
+
+  /* ---- Header ---- */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 22px;
+  }
+  .topbar .title-wrap .kicker{
+    color: var(--teal); font-size: 13px; letter-spacing:.3px; font-weight:700;
+  }
+  .topbar h1{ font-size: 26px; line-height:1.15; margin-top:2px;}
+  .badge-row{ display:flex; gap:10px; }
+  .badge{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 8px 12px;
+    display:flex; align-items:center; gap:6px;
+    font-weight:800;
+    font-size: 14px;
+  }
+
+  /* ---- Screens ---- */
+  .screen{ display:none; }
+  .screen.active{ display:block; }
+
+  /* ---- Level map ---- */
+  .map-card{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 22px;
+  }
+  .map-card p.intro{ color: var(--text-muted); margin: 6px 0 20px; line-height:1.6; font-size:15px;}
+  .path{
+    position:relative;
+    padding-left: 6px;
+  }
+  .path::before{
+    content:"";
+    position:absolute;
+    left: 27px; top: 26px; bottom: 26px;
+    width: 4px;
+    background: repeating-linear-gradient(to bottom, var(--line) 0 8px, transparent 8px 16px);
+    border-radius: 4px;
+  }
+  .level-row{
+    position:relative;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding: 10px 0;
+  }
+  .level-node{
+    flex: 0 0 auto;
+    width:56px; height:56px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Baloo 2',sans-serif;
+    font-size:20px; font-weight:800;
+    background: var(--bg-panel-2);
+    border: 2px solid var(--line);
+    color: var(--text-muted);
+    z-index:1;
+    cursor: pointer;
+    transition: transform .15s ease;
+  }
+  .level-node.unlocked{
+    background: linear-gradient(145deg, var(--teal), #35a89f);
+    color: #08282a;
+    border-color: transparent;
+  }
+  .level-node.done{
+    background: linear-gradient(145deg, var(--gold), #e0a800);
+    color: #3a2600;
+    border-color: transparent;
+  }
+  .level-node:hover.unlocked, .level-node:hover.done{ transform: scale(1.08); }
+  .level-node.locked{ cursor:not-allowed; }
+  .level-info{ flex:1; }
+  .level-info .lv-title{ font-weight:800; font-size:16px; }
+  .level-info .lv-sub{ color: var(--text-muted); font-size:13.5px; margin-top:2px; }
+  .level-stars{ display:flex; gap:3px; margin-top:5px; }
+  .level-stars span{ font-size:13px; opacity:.35; }
+  .level-stars span.lit{ opacity:1; }
+
+  /* ---- Quiz screen ---- */
+  .quiz-card{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 22px;
+  }
+  .quiz-head{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-bottom: 14px;
+  }
+  .back-btn{
+    background:none; border:none; color: var(--text-muted);
+    font-family:'Nunito'; font-weight:700; font-size:14px; cursor:pointer;
+    padding: 6px 0;
+  }
+  .hearts{ display:flex; gap:4px; font-size:18px; }
+  .progress-track{
+    height: 8px; border-radius: 8px; background: var(--bg-panel-2);
+    overflow:hidden; margin: 4px 0 18px;
+  }
+  .progress-fill{
+    height:100%; background: linear-gradient(90deg, var(--teal), var(--gold));
+    border-radius: 8px; transition: width .3s ease;
+  }
+  .q-tag{ color: var(--teal); font-weight:800; font-size:13px; margin-bottom:6px;}
+  .q-prompt{ font-size: 19px; font-weight:700; line-height:1.5; margin-bottom: 4px; }
+  .q-zh{ color: var(--text-muted); font-size: 14px; margin-bottom: 18px; }
+  .options{ display:flex; flex-direction:column; gap:10px; }
+  .option{
+    text-align:left;
+    background: var(--bg-panel-2);
+    border: 2px solid transparent;
+    color: var(--text-light);
+    border-radius: 14px;
+    padding: 13px 16px;
+    font-family:'Nunito'; font-size:15.5px; font-weight:700;
+    cursor:pointer;
+    display:flex; align-items:center; gap:10px;
+    transition: border-color .15s ease, transform .1s ease;
+  }
+  .option:hover:not(.disabled){ border-color: var(--teal); }
+  .option .opt-letter{
+    flex:0 0 auto; width:26px; height:26px; border-radius:50%;
+    background: rgba(245,243,255,.1); display:flex; align-items:center; justify-content:center;
+    font-size:13px;
+  }
+  .option.correct{ border-color: var(--gold); background: rgba(255,201,60,.15); }
+  .option.wrong{ border-color: var(--coral); background: rgba(255,107,107,.15); }
+  .option.disabled{ cursor:default; opacity:.85; }
+
+  .feedback{
+    margin-top: 16px;
+    background: var(--bg-panel-2);
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 14.5px;
+    line-height:1.6;
+    display:none;
+  }
+  .feedback.show{ display:block; }
+  .feedback .fb-head{ font-weight:800; margin-bottom:4px; }
+  .feedback .fb-head.ok{ color: var(--gold); }
+  .feedback .fb-head.no{ color: var(--coral); }
+
+  .next-btn{
+    margin-top: 16px;
+    width:100%;
+    background: linear-gradient(90deg, var(--teal), #3ec6bb);
+    color: #063533;
+    border:none; border-radius: 14px;
+    padding: 13px;
+    font-family:'Baloo 2'; font-size:16px; font-weight:700;
+    cursor:pointer; display:none;
+  }
+  .next-btn.show{ display:block; }
+
+  /* ---- Result screen ---- */
+  .result-card{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 28px 22px;
+    text-align:center;
+  }
+  .result-card .big-stars{ font-size: 40px; margin: 6px 0 14px; letter-spacing:6px;}
+  .result-card h2{ font-size:22px; }
+  .result-card .score-line{ color: var(--text-muted); margin: 8px 0 20px; }
+  .result-btns{ display:flex; gap:10px; justify-content:center; }
+  .btn{
+    border:none; border-radius:14px; padding: 12px 18px;
+    font-family:'Baloo 2'; font-weight:700; font-size:15px; cursor:pointer;
+  }
+  .btn-primary{ background: linear-gradient(90deg, var(--gold), #eab308); color:#3a2600; }
+  .btn-ghost{ background: var(--bg-panel-2); color: var(--text-light); }
+
+  .game-over{
+    display:none;
+  }
+  .game-over.show{ display:block; }
+
+  @media (max-width: 420px){
+    .topbar h1{ font-size:22px; }
+    .q-prompt{ font-size:17px; }
+  }
+</style>
+</head>
+<body>
+<div class="stars-dust"></div>
+<div class="app">
+
+  <div class="topbar">
+    <div class="title-wrap">
+      <div class="kicker">GRAMMAR QUEST</div>
+      <h1>文法闖關大冒險</h1>
+    </div>
+    <div class="badge-row">
+      <div class="badge">⭐ <span id="totalStars">0</span></div>
+      <div class="badge">💎 <span id="totalScore">0</span></div>
+    </div>
+  </div>
+
+  <!-- MAP SCREEN -->
+  <div class="screen active" id="mapScreen">
+    <div class="map-card">
+      <h2>選一關開始挑戰！</h2>
+      <p class="intro">六個關卡，帶你練完 TOEIC 最常考的句型與文法重點。每關 5 題，答對越多、星星越多，過關才能解鎖下一關喔！</p>
+      <div class="path" id="pathList"></div>
+    </div>
+  </div>
+
+  <!-- QUIZ SCREEN -->
+  <div class="screen" id="quizScreen">
+    <div class="quiz-card">
+      <div class="quiz-head">
+        <button class="back-btn" onclick="backToMap()">← 返回地圖</button>
+        <div class="hearts" id="heartsDisplay"></div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="q-tag" id="qTag"></div>
+      <div class="q-prompt" id="qPrompt"></div>
+      <div class="q-zh" id="qZh"></div>
+      <div class="options" id="optionsList"></div>
+      <div class="feedback" id="feedback">
+        <div class="fb-head" id="fbHead"></div>
+        <div id="fbBody"></div>
+      </div>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">下一題 →</button>
+
+      <div class="game-over" id="gameOverPanel">
+        <p style="color:var(--coral); font-weight:800; margin-top:16px;">💔 愛心用完了，這關要重新挑戰！</p>
+        <button class="btn btn-primary" onclick="startLevel(currentLevelIndex)">重新開始這關</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div class="screen" id="resultScreen">
+    <div class="result-card">
+      <div class="q-tag" style="justify-content:center;">LEVEL CLEAR</div>
+      <h2 id="resultTitle"></h2>
+      <div class="big-stars" id="resultStars"></div>
+      <div class="score-line" id="resultLine"></div>
+      <div class="result-btns">
+        <button class="btn btn-ghost" onclick="startLevel(currentLevelIndex)">再玩一次</button>
+        <button class="btn btn-primary" onclick="backToMap()">回到地圖</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ---------------- DATA ---------------- */
+const levels = [
+  {
+    title: "第 1 關：基本句型",
+    sub: "Sentence Patterns · S+V, S+V+O...",
+    icon: "1",
+    questions: [
+      {
+        tag: "S + V + O",
+        prompt: "The manager ___ the report before the meeting.",
+        zh: "經理在開會前___這份報告。",
+        options: ["reviewed", "review", "reviewing", "to review"],
+        correct: 0,
+        exp: "正確答案是 reviewed。這是 S+V+O 句型：The manager（S）+ reviewed（V，過去式動詞）+ the report（O）。動詞要能表達完整的時態，不能用原形或 to V。"
+      },
+      {
+        tag: "S + V + C",
+        prompt: "This new laptop ___ very lightweight.",
+        zh: "這台新筆電___很輕巧。",
+        options: ["is", "does", "makes", "has"],
+        correct: 0,
+        exp: "S+V+C 句型需要連綴動詞（linking verb）連接主詞和補語。is 後面接形容詞 lightweight 說明主詞的狀態，是正確用法。"
+      },
+      {
+        tag: "S + V + IO + DO",
+        prompt: "The company will send ___ a confirmation email.",
+        zh: "公司將會寄一封確認信給___。",
+        options: ["you", "your", "yours", "yourself"],
+        correct: 0,
+        exp: "send + 間接受詞(IO) + 直接受詞(DO) 結構中，間接受詞要用受格代名詞 you，表示「寄給你」。"
+      },
+      {
+        tag: "S + V + O + OC",
+        prompt: "The team considers the new plan ___ effective.",
+        zh: "團隊認為這個新計畫___有效。",
+        options: ["highly", "high", "higher", "height"],
+        correct: 0,
+        exp: "考受詞補語(OC)的句型：consider + O + OC，OC 是形容詞 effective，前面用副詞 highly 修飾形容詞，強調程度。"
+      },
+      {
+        tag: "S + V (不及物)",
+        prompt: "Sales ___ significantly last quarter.",
+        zh: "上一季銷售額___大幅上升。",
+        options: ["increased", "increase", "increasing", "increases"],
+        correct: 0,
+        exp: "increase 在此當不及物動詞用，主詞 Sales 對應過去式 increased，符合「上一季」這個過去時間點。"
+      }
+    ]
+  },
+  {
+    title: "第 2 關：主詞動詞一致",
+    sub: "Subject-Verb Agreement",
+    icon: "2",
+    questions: [
+      {
+        tag: "單複數一致",
+        prompt: "Each of the employees ___ required to attend the training.",
+        zh: "每位員工都___必須參加這次培訓。",
+        options: ["is", "are", "were", "have been"],
+        correct: 0,
+        exp: "Each of + 複數名詞，主詞視為單數，動詞用 is。Each、Every、either、neither 後面接的都是單數動詞。"
+      },
+      {
+        tag: "單複數一致",
+        prompt: "The data ___ that customer satisfaction has improved.",
+        zh: "數據___顯示顧客滿意度已提升。",
+        options: ["show", "shows", "showing", "to show"],
+        correct: 1,
+        exp: "在正式英文中 data 常被當作單數集合名詞看待（尤其商用英文），故用 shows。"
+      },
+      {
+        tag: "There be 句型",
+        prompt: "There ___ several reasons for the delay.",
+        zh: "延誤___好幾個原因。",
+        options: ["is", "was", "are", "has been"],
+        correct: 2,
+        exp: "There be 句型中，動詞要跟隨後面真正的主詞 several reasons（複數），所以用 are。"
+      },
+      {
+        tag: "距離最近原則",
+        prompt: "Neither the manager nor the staff members ___ available today.",
+        zh: "無論是經理還是員工們，今天都___無法出席。",
+        options: ["is", "are", "was", "has"],
+        correct: 1,
+        exp: "neither...nor... 連接兩個主詞時，動詞要跟離它最近的主詞一致，staff members 是複數，所以用 are。"
+      },
+      {
+        tag: "動名詞當主詞",
+        prompt: "Reviewing contracts carefully ___ essential for this position.",
+        zh: "仔細審閱合約___這個職位的必要條件。",
+        options: ["are", "is", "were", "have been"],
+        correct: 1,
+        exp: "動名詞片語（Reviewing contracts carefully）當主詞時視為單數，動詞用 is。"
+      }
+    ]
+  },
+  {
+    title: "第 3 關：分詞形容詞",
+    sub: "Participial Adjectives · V-ing vs V-ed",
+    icon: "3",
+    questions: [
+      {
+        tag: "現在分詞 vs 過去分詞",
+        prompt: "The ___ presentation impressed all the clients.",
+        zh: "這場___的簡報讓所有客戶印象深刻。",
+        options: ["impressed", "impressing", "impress", "impression"],
+        correct: 1,
+        exp: "主動、會讓人產生某種感覺，用現在分詞 impressing（令人印象深刻的）。修飾物時常用 -ing 形式。"
+      },
+      {
+        tag: "現在分詞 vs 過去分詞",
+        prompt: "The ___ employees received a bonus this month.",
+        zh: "___的員工這個月得到獎金。",
+        options: ["motivating", "motivated", "motivate", "motivation"],
+        correct: 1,
+        exp: "employees 是「被激勵」的一方（被動、感受者），要用過去分詞 motivated（感到被激勵的）。"
+      },
+      {
+        tag: "分詞構句",
+        prompt: "___ the budget, the finance team approved the project.",
+        zh: "在___預算之後，財務團隊核准了這個專案。",
+        options: ["Review", "Reviewing", "Reviewed", "To review"],
+        correct: 1,
+        exp: "分詞構句：finance team 是「審查」的主動執行者，且與主要子句主詞相同，所以用現在分詞 Reviewing 開頭。"
+      },
+      {
+        tag: "分詞構句（被動）",
+        prompt: "___ in 1998, the company now operates in 20 countries.",
+        zh: "___於1998年，這間公司現在在20個國家營運。",
+        options: ["Founding", "Founded", "Found", "To found"],
+        correct: 1,
+        exp: "公司是「被成立」的，屬於被動關係，分詞構句要用過去分詞 Founded 開頭。"
+      },
+      {
+        tag: "情緒動詞形容詞",
+        prompt: "Many customers were ___ with the fast delivery service.",
+        zh: "許多顧客對快速的送貨服務感到___。",
+        options: ["satisfying", "satisfied", "satisfy", "satisfaction"],
+        correct: 1,
+        exp: "customers 是感到滿意的一方（人的感受），情緒動詞的形容詞用法要用過去分詞 satisfied。"
+      }
+    ]
+  },
+  {
+    title: "第 4 關：被動語態",
+    sub: "Passive Voice",
+    icon: "4",
+    questions: [
+      {
+        tag: "基本被動式",
+        prompt: "The annual report ___ by the accounting department every year.",
+        zh: "年度報告每年都___會計部門___。",
+        options: ["prepares", "is prepared", "preparing", "has prepare"],
+        correct: 1,
+        exp: "report 是「被準備」的對象，用被動語態 be + p.p.：is prepared，符合現在式的常態事實。"
+      },
+      {
+        tag: "完成式被動",
+        prompt: "The new policy ___ already ___ to all staff.",
+        zh: "新政策已經___給所有員工___。",
+        options: ["has / announced", "have / announce", "is / announcing", "was / announce"],
+        correct: 0,
+        exp: "現在完成式被動：has been announced 的結構是 has + been + p.p.，這裡對應 has / announced。"
+      },
+      {
+        tag: "情態動詞被動",
+        prompt: "All applications ___ submitted by Friday.",
+        zh: "所有申請都___在星期五前提交。",
+        options: ["must", "must be", "must to be", "are must"],
+        correct: 1,
+        exp: "情態動詞的被動式：must be + p.p.，applications 是「被提交」的對象。"
+      },
+      {
+        tag: "by 行為者",
+        prompt: "The proposal was reviewed ___ the board of directors.",
+        zh: "這份提案___董事會審閱。",
+        options: ["with", "from", "by", "at"],
+        correct: 2,
+        exp: "被動語態中，引出真正執行動作的人或單位要用介系詞 by，表示「被...審閱」。"
+      },
+      {
+        tag: "主動 vs 被動判斷",
+        prompt: "The equipment ___ regularly to ensure safety.",
+        zh: "這些設備___定期檢查以確保安全。",
+        options: ["inspects", "is inspected", "inspecting", "inspect"],
+        correct: 1,
+        exp: "equipment 不會自己「檢查」，是被檢查的對象，所以要用被動語態 is inspected。"
+      }
+    ]
+  },
+  {
+    title: "第 5 關：介系詞與連接詞",
+    sub: "Prepositions & Conjunctions",
+    icon: "5",
+    questions: [
+      {
+        tag: "時間介系詞",
+        prompt: "The contract must be signed ___ the end of this month.",
+        zh: "合約必須在這個月底___簽署完成。",
+        options: ["until", "by", "since", "during"],
+        correct: 1,
+        exp: "by 表示「在...之前」的截止時間點，符合「月底前簽署完成」的語意。until 則強調動作持續到某時間點。"
+      },
+      {
+        tag: "原因連接詞",
+        prompt: "___ the heavy rain, the outdoor event was postponed.",
+        zh: "___大雨，戶外活動被延期了。",
+        options: ["Because", "Because of", "Although", "So that"],
+        correct: 1,
+        exp: "because of + 名詞片語（the heavy rain），因為後面接的是名詞而非子句，所以要用 because of 而非 because。"
+      },
+      {
+        tag: "對比連接詞",
+        prompt: "___ the price increase, sales remained strong.",
+        zh: "___價格上漲，銷售依然強勁。",
+        options: ["Despite", "Although", "However", "Because"],
+        correct: 0,
+        exp: "despite + 名詞片語，表示「儘管」，後面接名詞 the price increase；although 則要接完整子句。"
+      },
+      {
+        tag: "地點/方式介系詞",
+        prompt: "Please submit the form ___ email before Friday.",
+        zh: "請在星期五前___email___表格。",
+        options: ["in", "by", "at", "on"],
+        correct: 1,
+        exp: "by + 交通/傳遞方式（by email, by phone, by mail）表示「透過...方式」，是固定用法。"
+      },
+      {
+        tag: "目的連接詞",
+        prompt: "The team worked overtime ___ they could meet the deadline.",
+        zh: "團隊加班___他們能趕上截止日期。",
+        options: ["so that", "in order", "because", "unless"],
+        correct: 0,
+        exp: "so that + 子句表示「為了...目的」，符合語意；in order 需搭配 to V 而非直接接子句。"
+      }
+    ]
+  },
+  {
+    title: "第 6 關：商用 Email 用語",
+    sub: "Business Email Vocabulary",
+    icon: "6",
+    questions: [
+      {
+        tag: "Email 開頭",
+        prompt: "I am writing to ___ about the status of my order.",
+        zh: "我寫這封信是想___關於我訂單的狀況。",
+        options: ["inquire", "inquiry", "inquired", "inquiries"],
+        correct: 0,
+        exp: "write to + 動詞原形，表示寫信的目的，inquire（詢問）是動詞，符合文法結構。"
+      },
+      {
+        tag: "附件用語",
+        prompt: "Please find the invoice ___ for your reference.",
+        zh: "請查收___的發票以供參考。",
+        options: ["attach", "attached", "attaching", "attachment"],
+        correct: 1,
+        exp: "Please find + 受詞 + attached 是商用email的固定用法，attached 是過去分詞當形容詞，修飾 invoice「被附上的」。"
+      },
+      {
+        tag: "禮貌請求",
+        prompt: "We would ___ it if you could confirm your attendance by Monday.",
+        zh: "如果您能在星期一前確認出席，我們將會非常___。",
+        options: ["appreciate", "appreciating", "appreciated", "appreciation"],
+        correct: 0,
+        exp: "would appreciate it if... 是商用email中禮貌請求的固定句型，appreciate 為動詞原形。"
+      },
+      {
+        tag: "結尾用語",
+        prompt: "Please do not hesitate to ___ me if you have any questions.",
+        zh: "如有任何問題，請___與我聯繫。",
+        options: ["contact", "contacting", "contacted", "contacts"],
+        correct: 0,
+        exp: "hesitate to + 動詞原形，not hesitate to contact 是email結尾常見的固定用法，表示「請不吝聯繫」。"
+      },
+      {
+        tag: "正式用語替換",
+        prompt: "We regret to inform you that your application has been ___.",
+        zh: "我們很遺憾通知您，您的申請已被___。",
+        options: ["decline", "declined", "declining", "declination"],
+        correct: 1,
+        exp: "has been + 過去分詞是現在完成式被動，declined（被拒絕）符合正式email婉拒的用語。"
+      }
+    ]
+  }
+];
+
+/* ---------------- STATE ---------------- */
+let totalStars = 0;
+let totalScore = 0;
+let levelStars = new Array(levels.length).fill(0);
+let unlockedUpTo = 0; // index of highest unlocked level
+
+let currentLevelIndex = 0;
+let currentQIndex = 0;
+let hearts = 3;
+let correctCount = 0;
+let answered = false;
+
+/* ---------------- RENDER MAP ---------------- */
+function renderMap(){
+  document.getElementById('totalStars').textContent = totalStars;
+  document.getElementById('totalScore').textContent = totalScore;
+
+  const pathList = document.getElementById('pathList');
+  pathList.innerHTML = '';
+  levels.forEach((lvl, i) => {
+    const state = i > unlockedUpTo ? 'locked' : (levelStars[i] > 0 ? 'done' : 'unlocked');
+    const row = document.createElement('div');
+    row.className = 'level-row';
+
+    const starsHtml = [1,2,3].map(n =>
+      `<span class="${n <= levelStars[i] ? 'lit' : ''}">★</span>`
+    ).join('');
+
+    row.innerHTML = `
+      <div class="level-node ${state}" onclick="${state !== 'locked' ? `startLevel(${i})` : ''}">
+        ${state === 'locked' ? '🔒' : (state === 'done' ? '✓' : lvl.icon)}
+      </div>
+      <div class="level-info">
+        <div class="lv-title">${lvl.title}</div>
+        <div class="lv-sub">${lvl.sub}</div>
+        <div class="level-stars">${starsHtml}</div>
+      </div>
+    `;
+    pathList.appendChild(row);
+  });
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function backToMap(){
+  renderMap();
+  showScreen('mapScreen');
+}
+
+/* ---------------- QUIZ LOGIC ---------------- */
+function startLevel(index){
+  currentLevelIndex = index;
+  currentQIndex = 0;
+  hearts = 3;
+  correctCount = 0;
+  document.getElementById('gameOverPanel').classList.remove('show');
+  document.getElementById('optionsList').style.display = 'flex';
+  renderQuestion();
+  showScreen('quizScreen');
+}
+
+function renderHearts(){
+  const el = document.getElementById('heartsDisplay');
+  el.innerHTML = '';
+  for(let i=0;i<3;i++){
+    el.innerHTML += i < hearts ? '❤️' : '🖤';
+  }
+}
+
+function renderQuestion(){
+  answered = false;
+  const lvl = levels[currentLevelIndex];
+  const q = lvl.questions[currentQIndex];
+
+  renderHearts();
+  const pct = (currentQIndex / lvl.questions.length) * 100;
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  document.getElementById('qTag').textContent = q.tag;
+  document.getElementById('qPrompt').textContent = q.prompt;
+  document.getElementById('qZh').textContent = q.zh;
+
+  const letters = ['A','B','C','D'];
+  const optsEl = document.getElementById('optionsList');
+  optsEl.innerHTML = '';
+  q.options.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
+    btn.onclick = () => selectAnswer(i);
+    optsEl.appendChild(btn);
+  });
+
+  document.getElementById('feedback').classList.remove('show');
+  document.getElementById('nextBtn').classList.remove('show');
+}
+
+function selectAnswer(i){
+  if(answered) return;
+  answered = true;
+  const lvl = levels[currentLevelIndex];
+  const q = lvl.questions[currentQIndex];
+  const opts = document.querySelectorAll('.option');
+
+  opts.forEach((btn, idx) => {
+    btn.classList.add('disabled');
+    if(idx === q.correct) btn.classList.add('correct');
+    if(idx === i && i !== q.correct) btn.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback');
+  const fbHead = document.getElementById('fbHead');
+  const fbBody = document.getElementById('fbBody');
+  fb.classList.add('show');
+
+  if(i === q.correct){
+    correctCount++;
+    totalScore += 10;
+    fbHead.textContent = '✅ 答對了！';
+    fbHead.className = 'fb-head ok';
+  } else {
+    hearts--;
+    fbHead.textContent = '❌ 差一點點！';
+    fbHead.className = 'fb-head no';
+  }
+  fbBody.textContent = q.exp;
+
+  document.getElementById('totalScore').textContent = totalScore;
+
+  if(hearts <= 0){
+    setTimeout(() => {
+      document.getElementById('optionsList').style.display = 'none';
+      document.getElementById('gameOverPanel').classList.add('show');
+    }, 400);
+    return;
+  }
+
+  document.getElementById('nextBtn').classList.add('show');
+}
+
+function nextQuestion(){
+  const lvl = levels[currentLevelIndex];
+  if(currentQIndex < lvl.questions.length - 1){
+    currentQIndex++;
+    renderQuestion();
+  } else {
+    finishLevel();
+  }
+}
+
+function finishLevel(){
+  const lvl = levels[currentLevelIndex];
+  const total = lvl.questions.length;
+  let stars = 1;
+  if(correctCount === total) stars = 3;
+  else if(correctCount >= Math.ceil(total * 0.6)) stars = 2;
+
+  if(stars > levelStars[currentLevelIndex]){
+    totalStars += (stars - levelStars[currentLevelIndex]);
+    levelStars[currentLevelIndex] = stars;
+  }
+  if(currentLevelIndex === unlockedUpTo && unlockedUpTo < levels.length - 1){
+    unlockedUpTo++;
+  }
+
+  document.getElementById('resultTitle').textContent = lvl.title + ' 過關！';
+  document.getElementById('resultStars').textContent = '★★★'.slice(0, 0) +
+    Array.from({length:3}, (_,i) => i < stars ? '★' : '☆').join('');
+  document.getElementById('resultLine').textContent =
+    `答對 ${correctCount} / ${total} 題，獲得 ${stars} 顆星`;
+
+  showScreen('resultScreen');
+}
+
+/* ---------------- INIT ---------------- */
+renderMap();
+</script>
+</body>
+</html>
