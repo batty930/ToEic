@@ -3,775 +3,749 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>文法闖關：TOEIC 句型大冒險</title>
+<title>語界解構者：試煉之塔 Tower of Trials</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Rajdhani:wght@600;700&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg-deep: #14133B;
-    --bg-panel: #1E1B5E;
-    --bg-panel-2: #262277;
-    --coral: #FF6B6B;
-    --gold: #FFC93C;
-    --teal: #4ECDC4;
-    --text-light: #F5F3FF;
-    --text-muted: #A9A6D9;
-    --line: rgba(245,243,255,0.12);
+    --void: #0A0817; --mist: #17133A; --mist-2: #201A4A;
+    --cyan: #5EEAD4; --cyan-dim: rgba(94,234,212,.18);
+    --amber: #F5B942; --amber-dim: rgba(245,185,66,.18);
+    --crimson: #E23B5D; --violet: #B389FF; --violet-dim: rgba(179,137,255,.16);
+    --ink: #EDE9FF; --ink-dim: #948CC4; --line: rgba(148,140,196,.22);
   }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
   body{
-    background: radial-gradient(circle at 20% 0%, #201D6B 0%, var(--bg-deep) 55%);
-    color: var(--text-light);
-    font-family: 'Nunito', sans-serif;
-    min-height: 100vh;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    padding: 28px 16px 60px;
+    min-height:100vh;
+    background:
+      radial-gradient(ellipse at 20% -10%, rgba(94,234,212,.10), transparent 45%),
+      radial-gradient(ellipse at 90% 10%, rgba(245,185,66,.08), transparent 40%),
+      linear-gradient(180deg, var(--void) 0%, #0E0B24 60%, var(--void) 100%);
+    color: var(--ink); font-family:'Noto Sans TC', sans-serif;
+    display:flex; flex-direction:column; align-items:center;
+    padding: 0 0 40px; position:relative; overflow-x:hidden;
   }
-  h1,h2,h3, .display{
-    font-family: 'Baloo 2', sans-serif;
-    font-weight: 700;
-    margin: 0;
-  }
-  .stars-dust{
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    background-image:
-      radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,.5), transparent),
-      radial-gradient(2px 2px at 80% 10%, rgba(255,255,255,.4), transparent),
-      radial-gradient(1.5px 1.5px at 50% 70%, rgba(255,255,255,.35), transparent),
-      radial-gradient(1.5px 1.5px at 30% 85%, rgba(255,255,255,.3), transparent),
-      radial-gradient(2px 2px at 90% 60%, rgba(255,255,255,.4), transparent);
-    background-repeat: no-repeat;
-    opacity:.6;
-  }
-  .app{ width: 100%; max-width: 640px; position:relative; z-index:1; }
+  .title-font{ font-family:'Cinzel', serif; } .tech-font{ font-family:'Rajdhani', sans-serif; letter-spacing:.03em; }
+  .dust{ position:fixed; inset:0; pointer-events:none; z-index:0; }
+  .mote{ position:absolute; bottom:-6%; border-radius:50%; background: radial-gradient(circle, rgba(94,234,212,.9), transparent 70%); animation: rise linear infinite; opacity:.6; }
+  @keyframes rise{ from{ transform: translateY(0); opacity:0; } 10%{ opacity:.7; } 90%{ opacity:.4; } to{ transform: translateY(-115vh) translateX(20px); opacity:0; } }
 
-  /* ---- Header ---- */
-  .topbar{
-    display:flex; align-items:center; justify-content:space-between;
-    margin-bottom: 22px;
-  }
-  .topbar .title-wrap .kicker{
-    color: var(--teal); font-size: 13px; letter-spacing:.3px; font-weight:700;
-  }
-  .topbar h1{ font-size: 26px; line-height:1.15; margin-top:2px;}
-  .badge-row{ display:flex; gap:10px; }
-  .badge{
-    background: var(--bg-panel);
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    padding: 8px 12px;
-    display:flex; align-items:center; gap:6px;
-    font-weight:800;
-    font-size: 14px;
-  }
+  .app{ width:100%; max-width:600px; position:relative; z-index:1; padding: 18px 14px; }
+  .screen{ display:none; } .screen.active{ display:block; }
 
-  /* ---- Screens ---- */
-  .screen{ display:none; }
-  .screen.active{ display:block; }
+  /* ---- shared header ---- */
+  .header-bar{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+  .back-link{ background:none; border:none; color:var(--ink-dim); font-family:'Rajdhani',sans-serif; font-weight:700; font-size:14px; cursor:pointer; }
+  .stat-badges{ display:flex; gap:8px; }
+  .stat-badge{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:13px; background: var(--amber-dim); color: var(--amber); border:1px solid rgba(245,185,66,.4); border-radius:10px; padding:5px 10px; }
 
-  /* ---- Level map ---- */
-  .map-card{
-    background: var(--bg-panel);
-    border: 1px solid var(--line);
-    border-radius: 22px;
-    padding: 22px;
-  }
-  .map-card p.intro{ color: var(--text-muted); margin: 6px 0 20px; line-height:1.6; font-size:15px;}
-  .path{
-    position:relative;
-    padding-left: 6px;
-  }
-  .path::before{
-    content:"";
-    position:absolute;
-    left: 27px; top: 26px; bottom: 26px;
-    width: 4px;
-    background: repeating-linear-gradient(to bottom, var(--line) 0 8px, transparent 8px 16px);
-    border-radius: 4px;
-  }
-  .level-row{
-    position:relative;
-    display:flex;
-    align-items:center;
-    gap:16px;
-    padding: 10px 0;
-  }
-  .level-node{
-    flex: 0 0 auto;
-    width:56px; height:56px;
-    border-radius:50%;
-    display:flex; align-items:center; justify-content:center;
-    font-family:'Baloo 2',sans-serif;
-    font-size:20px; font-weight:800;
-    background: var(--bg-panel-2);
-    border: 2px solid var(--line);
-    color: var(--text-muted);
-    z-index:1;
-    cursor: pointer;
-    transition: transform .15s ease;
-  }
-  .level-node.unlocked{
-    background: linear-gradient(145deg, var(--teal), #35a89f);
-    color: #08282a;
-    border-color: transparent;
-  }
-  .level-node.done{
-    background: linear-gradient(145deg, var(--gold), #e0a800);
-    color: #3a2600;
-    border-color: transparent;
-  }
-  .level-node:hover.unlocked, .level-node:hover.done{ transform: scale(1.08); }
-  .level-node.locked{ cursor:not-allowed; }
-  .level-info{ flex:1; }
-  .level-info .lv-title{ font-weight:800; font-size:16px; }
-  .level-info .lv-sub{ color: var(--text-muted); font-size:13.5px; margin-top:2px; }
-  .level-stars{ display:flex; gap:3px; margin-top:5px; }
-  .level-stars span{ font-size:13px; opacity:.35; }
-  .level-stars span.lit{ opacity:1; }
+  .panel{ background: var(--mist); border:1px solid var(--line); border-radius:20px; padding:20px; box-shadow: 0 12px 30px rgba(0,0,0,.3); }
+  h1.title-font{ font-size:22px; margin:0 0 6px; }
+  p.desc{ color: var(--ink-dim); font-size:14px; line-height:1.7; margin: 0 0 18px; }
 
-  /* ---- Quiz screen ---- */
-  .quiz-card{
-    background: var(--bg-panel);
-    border: 1px solid var(--line);
-    border-radius: 22px;
-    padding: 22px;
-  }
-  .quiz-head{
-    display:flex; justify-content:space-between; align-items:center;
-    margin-bottom: 14px;
-  }
-  .back-btn{
-    background:none; border:none; color: var(--text-muted);
-    font-family:'Nunito'; font-weight:700; font-size:14px; cursor:pointer;
-    padding: 6px 0;
-  }
-  .hearts{ display:flex; gap:4px; font-size:18px; }
-  .progress-track{
-    height: 8px; border-radius: 8px; background: var(--bg-panel-2);
-    overflow:hidden; margin: 4px 0 18px;
-  }
-  .progress-fill{
-    height:100%; background: linear-gradient(90deg, var(--teal), var(--gold));
-    border-radius: 8px; transition: width .3s ease;
-  }
-  .q-tag{ color: var(--teal); font-weight:800; font-size:13px; margin-bottom:6px;}
-  .q-prompt{ font-size: 19px; font-weight:700; line-height:1.5; margin-bottom: 4px; }
-  .q-zh{ color: var(--text-muted); font-size: 14px; margin-bottom: 18px; }
-  .options{ display:flex; flex-direction:column; gap:10px; }
-  .option{
-    text-align:left;
-    background: var(--bg-panel-2);
-    border: 2px solid transparent;
-    color: var(--text-light);
-    border-radius: 14px;
-    padding: 13px 16px;
-    font-family:'Nunito'; font-size:15.5px; font-weight:700;
-    cursor:pointer;
-    display:flex; align-items:center; gap:10px;
-    transition: border-color .15s ease, transform .1s ease;
-  }
-  .option:hover:not(.disabled){ border-color: var(--teal); }
-  .option .opt-letter{
-    flex:0 0 auto; width:26px; height:26px; border-radius:50%;
-    background: rgba(245,243,255,.1); display:flex; align-items:center; justify-content:center;
-    font-size:13px;
-  }
-  .option.correct{ border-color: var(--gold); background: rgba(255,201,60,.15); }
-  .option.wrong{ border-color: var(--coral); background: rgba(255,107,107,.15); }
-  .option.disabled{ cursor:default; opacity:.85; }
+  /* ---- tower map (5 stages) ---- */
+  .tower-path{ position:relative; padding-left:4px; }
+  .tower-path::before{ content:""; position:absolute; left:31px; top:30px; bottom:30px; width:5px; background: repeating-linear-gradient(to bottom, var(--line) 0 8px, transparent 8px 16px); border-radius:5px; }
+  .stage-row{ position:relative; display:flex; align-items:center; gap:16px; padding:12px 0; }
+  .stage-node{ flex:0 0 auto; width:64px; height:64px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:26px; z-index:1; cursor:pointer; background: var(--mist-2); border:2px solid var(--line); transition: transform .15s ease; }
+  .stage-node.unlocked{ background: linear-gradient(150deg, var(--cyan-dim), rgba(94,234,212,.05)); border-color: rgba(94,234,212,.5); box-shadow: 0 0 18px rgba(94,234,212,.18); }
+  .stage-node.done{ background: linear-gradient(150deg, var(--amber-dim), rgba(245,185,66,.05)); border-color: rgba(245,185,66,.55); box-shadow: 0 0 18px rgba(245,185,66,.2); }
+  .stage-node.locked{ cursor:not-allowed; opacity:.55; }
+  .stage-node:hover.unlocked, .stage-node:hover.done{ transform: scale(1.06); }
+  .stage-info{ flex:1; }
+  .stage-name{ font-family:'Cinzel',serif; font-size:16.5px; }
+  .stage-sub{ color: var(--ink-dim); font-size:12.5px; margin-top:2px; font-family:'Rajdhani',sans-serif; }
+  .stage-grammar{ display:flex; gap:5px; flex-wrap:wrap; margin-top:6px; }
+  .grammar-chip{ font-size:11px; background: var(--violet-dim); color: var(--violet); border:1px solid rgba(179,137,255,.35); border-radius:8px; padding:2px 7px; }
 
-  .feedback{
-    margin-top: 16px;
-    background: var(--bg-panel-2);
-    border-radius: 14px;
-    padding: 14px 16px;
-    font-size: 14.5px;
-    line-height:1.6;
-    display:none;
-  }
-  .feedback.show{ display:block; }
-  .feedback .fb-head{ font-weight:800; margin-bottom:4px; }
-  .feedback .fb-head.ok{ color: var(--gold); }
-  .feedback .fb-head.no{ color: var(--coral); }
+  /* ---- level list within a stage ---- */
+  .level-card{ background: var(--mist-2); border:1px solid var(--line); border-radius:16px; padding:15px 16px; margin-bottom:10px; display:flex; align-items:center; gap:14px; cursor:pointer; }
+  .level-card.locked{ opacity:.5; cursor:not-allowed; }
+  .level-card.boss{ border-color: rgba(226,59,93,.45); background: linear-gradient(150deg, rgba(226,59,93,.1), var(--mist-2)); }
+  .level-icon{ font-size:28px; flex:0 0 auto; width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; background: rgba(94,234,212,.1); }
+  .level-card.boss .level-icon{ background: rgba(226,59,93,.14); }
+  .level-body{ flex:1; }
+  .level-name{ font-weight:700; font-size:15.5px; }
+  .level-meta{ color: var(--ink-dim); font-size:12.5px; margin-top:2px; }
+  .level-stars{ font-size:13px; }
+  .level-stars span{ opacity:.3; } .level-stars span.lit{ opacity:1; }
 
-  .next-btn{
-    margin-top: 16px;
-    width:100%;
-    background: linear-gradient(90deg, var(--teal), #3ec6bb);
-    color: #063533;
-    border:none; border-radius: 14px;
-    padding: 13px;
-    font-family:'Baloo 2'; font-size:16px; font-weight:700;
-    cursor:pointer; display:none;
-  }
-  .next-btn.show{ display:block; }
+  /* ---- vocab learn carousel ---- */
+  .learn-card{ background: linear-gradient(150deg, var(--mist-2), var(--mist)); border:1px solid var(--line); border-radius:20px; padding:30px 20px; text-align:center; min-height:190px; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .learn-word{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:34px; color: var(--ink); }
+  .learn-pos{ font-size:12px; color: var(--violet); background: var(--violet-dim); border-radius:8px; padding:3px 10px; margin-top:8px; display:inline-block; }
+  .learn-meaning{ font-size:17px; color: var(--amber); margin-top:14px; min-height:26px; }
+  .learn-hint{ font-size:12.5px; color: var(--ink-dim); margin-top:6px; }
+  .learn-audio{ margin-top:14px; background: rgba(94,234,212,.14); border:1px solid rgba(94,234,212,.4); color: var(--cyan); border-radius:12px; padding:8px 16px; font-family:'Rajdhani',sans-serif; font-weight:700; cursor:pointer; }
+  .learn-nav{ display:flex; align-items:center; justify-content:space-between; margin-top:16px; }
+  .nav-btn{ background: var(--mist-2); border:1px solid var(--line); color: var(--ink); border-radius:12px; padding:10px 16px; font-family:'Rajdhani',sans-serif; font-weight:700; cursor:pointer; }
+  .nav-btn:disabled{ opacity:.35; cursor:not-allowed; }
+  .learn-dots{ display:flex; gap:5px; }
+  .dot{ width:7px; height:7px; border-radius:50%; background: var(--line); }
+  .dot.active{ background: var(--cyan); }
+  .start-trial-btn{ margin-top:18px; width:100%; background: linear-gradient(120deg, var(--amber), #e0982b); color:#3a2600; border:none; border-radius:14px; padding:14px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:15.5px; cursor:pointer; }
 
-  /* ---- Result screen ---- */
-  .result-card{
-    background: var(--bg-panel);
-    border: 1px solid var(--line);
-    border-radius: 22px;
-    padding: 28px 22px;
-    text-align:center;
-  }
-  .result-card .big-stars{ font-size: 40px; margin: 6px 0 14px; letter-spacing:6px;}
-  .result-card h2{ font-size:22px; }
-  .result-card .score-line{ color: var(--text-muted); margin: 8px 0 20px; }
-  .result-btns{ display:flex; gap:10px; justify-content:center; }
-  .btn{
-    border:none; border-radius:14px; padding: 12px 18px;
-    font-family:'Baloo 2'; font-weight:700; font-size:15px; cursor:pointer;
-  }
-  .btn-primary{ background: linear-gradient(90deg, var(--gold), #eab308); color:#3a2600; }
-  .btn-ghost{ background: var(--bg-panel-2); color: var(--text-light); }
+  /* ---- battle/trial phase ---- */
+  .trial-hud{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .hearts{ font-size:17px; }
+  .progress-track{ height:8px; border-radius:8px; background: var(--mist-2); overflow:hidden; margin-bottom:16px; }
+  .progress-fill{ height:100%; background: linear-gradient(90deg, var(--cyan), var(--amber)); border-radius:8px; transition: width .3s ease; }
+  .puzzle-zh{ color:var(--ink-dim); font-size:13.5px; margin-bottom:8px; }
+  .puzzle-sentence{ background: var(--mist-2); border:1px solid var(--line); border-radius:16px; padding:18px 16px; text-align:center; font-size:16.5px; line-height:1.7; font-weight:700; }
+  .blank{ display:inline-block; min-width:64px; border-bottom:3px solid var(--amber); color:var(--amber); padding:0 4px; }
+  .blank.filled{ color:var(--ink); border-bottom-color: var(--cyan); }
+  .options-row{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; justify-content:center; }
+  .option-card{ flex:1 1 40%; min-width:110px; background: var(--mist-2); border:2px solid var(--line); border-radius:14px; padding:13px 10px; text-align:center; cursor:pointer; transition: border-color .15s ease, transform .12s ease; }
+  .option-card:hover:not(.disabled){ border-color: var(--cyan); transform: translateY(-2px); }
+  .option-card .word{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:16px; }
+  .option-card .speak-mini{ display:block; margin:6px auto 0; width:26px; height:26px; border-radius:8px; background: rgba(94,234,212,.14); border:1px solid rgba(94,234,212,.35); color:var(--cyan); font-size:12px; cursor:pointer; }
+  .option-card.correct{ border-color: var(--amber); background: rgba(245,185,66,.12); }
+  .option-card.wrong{ border-color: var(--crimson); background: rgba(226,59,93,.12); }
+  .option-card.disabled{ cursor:default; }
+  .feedback-box{ background: var(--mist-2); border:1px solid var(--line); border-radius:16px; padding:14px 16px; margin-top:14px; font-size:14.5px; line-height:1.7; display:none; }
+  .feedback-box.show{ display:block; }
+  .feedback-box.ok{ border-color: rgba(245,185,66,.45); } .feedback-box.no{ border-color: rgba(226,59,93,.45); }
+  .fb-verdict{ font-family:'Rajdhani',sans-serif; font-weight:700; font-size:14.5px; margin-bottom:4px; }
+  .fb-verdict.ok{ color: var(--amber); } .fb-verdict.no{ color: var(--crimson); }
+  .audio-row{ display:flex; gap:8px; justify-content:center; margin-top:10px; }
+  .audio-btn{ background: rgba(94,234,212,.12); border:1px solid rgba(94,234,212,.35); color:var(--cyan); border-radius:10px; padding:7px 13px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:12.5px; cursor:pointer; }
+  .audio-btn.slow{ background: rgba(245,185,66,.12); border-color: rgba(245,185,66,.4); color: var(--amber); }
+  .continue-btn{ margin-top:14px; width:100%; background: linear-gradient(120deg, var(--cyan), #38c9b4); color:#062824; border:none; border-radius:14px; padding:13px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:15.5px; cursor:pointer; display:none; }
+  .continue-btn.show{ display:block; }
 
-  .game-over{
-    display:none;
-  }
-  .game-over.show{ display:block; }
+  /* ---- result / reward ---- */
+  .result-panel{ text-align:center; }
+  .big-stars{ font-size:38px; letter-spacing:8px; margin: 8px 0 10px; }
+  .card-grid{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin: 16px 0; }
+  .vocab-card{ width:104px; background: var(--mist-2); border:1px solid rgba(245,185,66,.4); border-radius:14px; padding:12px 8px; box-shadow: 0 0 18px rgba(245,185,66,.12); }
+  .vocab-card .vc-word{ font-family:'Rajdhani',sans-serif; font-weight:700; color: var(--amber); font-size:14.5px; }
+  .vocab-card .vc-meaning{ font-size:12px; color:var(--ink); margin-top:3px; }
+  .result-btns{ display:flex; gap:10px; justify-content:center; margin-top:6px; }
+  .btn{ border:none; border-radius:14px; padding:12px 18px; font-family:'Rajdhani',sans-serif; font-weight:700; font-size:14.5px; cursor:pointer; }
+  .btn-primary{ background: linear-gradient(120deg, var(--amber), #e0982b); color:#3a2600; }
+  .btn-ghost{ background: var(--mist-2); color: var(--ink); border:1px solid var(--line); }
 
-  @media (max-width: 420px){
-    .topbar h1{ font-size:22px; }
-    .q-prompt{ font-size:17px; }
-  }
+  .overlay{ position:fixed; inset:0; background: rgba(6,5,18,.86); display:none; align-items:center; justify-content:center; z-index:20; padding:20px; }
+  .overlay.show{ display:flex; }
+  .overlay-card{ background: var(--mist); border:1px solid rgba(226,59,93,.4); border-radius:20px; padding:28px 24px; text-align:center; max-width:340px; }
+  .overlay-card .oc-title{ font-family:'Cinzel',serif; color: var(--crimson); font-size:18px; margin-bottom:10px; }
+  .overlay-card p{ color: var(--ink-dim); font-size:13.5px; line-height:1.7; margin-bottom:16px; }
+
+  @media (max-width:420px){ .learn-word{ font-size:28px; } .puzzle-sentence{ font-size:15px; } }
 </style>
 </head>
 <body>
-<div class="stars-dust"></div>
+<div class="dust" id="dust"></div>
 <div class="app">
 
-  <div class="topbar">
-    <div class="title-wrap">
-      <div class="kicker">GRAMMAR QUEST</div>
-      <h1>文法闖關大冒險</h1>
+  <!-- TOWER MAP -->
+  <div class="screen active" id="towerScreen">
+    <div class="header-bar">
+      <div class="title-font" style="font-size:19px;">試煉之塔</div>
+      <div class="stat-badges"><div class="stat-badge">📖 <span id="towerVocabCount">0</span> 個單字</div></div>
     </div>
-    <div class="badge-row">
-      <div class="badge">⭐ <span id="totalStars">0</span></div>
-      <div class="badge">💎 <span id="totalScore">0</span></div>
-    </div>
-  </div>
-
-  <!-- MAP SCREEN -->
-  <div class="screen active" id="mapScreen">
-    <div class="map-card">
-      <h2>選一關開始挑戰！</h2>
-      <p class="intro">六個關卡，帶你練完 TOEIC 最常考的句型與文法重點。每關 5 題，答對越多、星星越多，過關才能解鎖下一關喔！</p>
-      <div class="path" id="pathList"></div>
+    <div class="panel">
+      <h1 class="title-font">TOEIC 語詞試煉之塔</h1>
+      <p class="desc">五座階層，對應多益從基礎到高階的字彙與 15 大核心文法。每一關先認識新單字，再進入試煉戰鬥。通過魔王關，就能解鎖下一座階層！</p>
+      <div class="tower-path" id="towerPath"></div>
     </div>
   </div>
 
-  <!-- QUIZ SCREEN -->
-  <div class="screen" id="quizScreen">
-    <div class="quiz-card">
-      <div class="quiz-head">
-        <button class="back-btn" onclick="backToMap()">← 返回地圖</button>
-        <div class="hearts" id="heartsDisplay"></div>
-      </div>
-      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
-      <div class="q-tag" id="qTag"></div>
-      <div class="q-prompt" id="qPrompt"></div>
-      <div class="q-zh" id="qZh"></div>
-      <div class="options" id="optionsList"></div>
-      <div class="feedback" id="feedback">
-        <div class="fb-head" id="fbHead"></div>
-        <div id="fbBody"></div>
-      </div>
-      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">下一題 →</button>
-
-      <div class="game-over" id="gameOverPanel">
-        <p style="color:var(--coral); font-weight:800; margin-top:16px;">💔 愛心用完了，這關要重新挑戰！</p>
-        <button class="btn btn-primary" onclick="startLevel(currentLevelIndex)">重新開始這關</button>
-      </div>
+  <!-- STAGE (LEVEL LIST) -->
+  <div class="screen" id="stageScreen">
+    <div class="header-bar">
+      <button class="back-link tech-font" onclick="showTower()">← 返回塔頂地圖</button>
+    </div>
+    <div class="panel">
+      <h1 class="title-font" id="stageTitle"></h1>
+      <p class="desc" id="stageDesc"></p>
+      <div id="levelList"></div>
     </div>
   </div>
 
-  <!-- RESULT SCREEN -->
+  <!-- LEVEL INTRO -->
+  <div class="screen" id="introScreen">
+    <div class="header-bar">
+      <button class="back-link tech-font" onclick="showStageFromLevel()">← 返回關卡列表</button>
+    </div>
+    <div class="panel result-panel">
+      <div style="font-size:40px;">📜</div>
+      <h1 class="title-font" id="introTitle"></h1>
+      <p class="desc" id="introGrammarNote" style="text-align:left;"></p>
+      <button class="continue-btn show" onclick="startLearnPhase()">進入詞彙修練 ▶</button>
+    </div>
+  </div>
+
+  <!-- LEARN PHASE -->
+  <div class="screen" id="learnScreen">
+    <div class="header-bar">
+      <button class="back-link tech-font" onclick="showStageFromLevel()">← 返回關卡列表</button>
+      <div class="stat-badge tech-font" id="learnCounter">1 / 12</div>
+    </div>
+    <div class="panel">
+      <div class="learn-card">
+        <div class="learn-word tech-font" id="learnWord"></div>
+        <div class="learn-pos tech-font" id="learnPos"></div>
+        <div class="learn-meaning" id="learnMeaning">點擊卡片查看意思</div>
+        <div class="learn-hint" id="learnHint">👆 點擊卡片翻面</div>
+        <button class="learn-audio tech-font" id="learnAudioBtn" type="button">🔊 聽發音</button>
+      </div>
+      <div class="learn-nav">
+        <button class="nav-btn tech-font" id="learnPrevBtn">← 上一個</button>
+        <div class="learn-dots" id="learnDots"></div>
+        <button class="nav-btn tech-font" id="learnNextBtn">下一個 →</button>
+      </div>
+      <button class="start-trial-btn tech-font" id="startTrialBtn" style="display:none;">⚔️ 開始試煉戰鬥</button>
+    </div>
+  </div>
+
+  <!-- BATTLE / TRIAL PHASE -->
+  <div class="screen" id="battleScreen">
+    <div class="header-bar">
+      <button class="back-link tech-font" onclick="showStageFromLevel()">← 返回關卡列表</button>
+      <div class="hearts" id="heartsDisplay"></div>
+    </div>
+    <div class="panel">
+      <div class="progress-track"><div class="progress-fill" id="battleProgress"></div></div>
+      <div class="puzzle-zh" id="battleZh"></div>
+      <div class="puzzle-sentence" id="battleSentence"></div>
+      <div class="options-row" id="battleOptions"></div>
+      <div class="feedback-box" id="battleFeedback">
+        <div class="fb-verdict" id="battleFbVerdict"></div>
+        <div id="battleFbBody"></div>
+        <div class="audio-row">
+          <button class="audio-btn tech-font" id="battleHearBtn" type="button">🔊 聽完整句</button>
+          <button class="audio-btn slow tech-font" id="battleSlowBtn" type="button">🐢 慢速</button>
+        </div>
+      </div>
+      <button class="continue-btn" id="battleNextBtn">下一題 ▶</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
   <div class="screen" id="resultScreen">
-    <div class="result-card">
-      <div class="q-tag" style="justify-content:center;">LEVEL CLEAR</div>
-      <h2 id="resultTitle"></h2>
+    <div class="panel result-panel">
+      <div style="font-size:36px;" id="resultEmoji">🏆</div>
+      <h1 class="title-font" id="resultTitle"></h1>
       <div class="big-stars" id="resultStars"></div>
-      <div class="score-line" id="resultLine"></div>
+      <div class="desc" id="resultLine"></div>
+      <div class="card-grid" id="resultCardGrid"></div>
       <div class="result-btns">
-        <button class="btn btn-ghost" onclick="startLevel(currentLevelIndex)">再玩一次</button>
-        <button class="btn btn-primary" onclick="backToMap()">回到地圖</button>
+        <button class="btn btn-ghost tech-font" id="retryLevelBtn">重玩這關</button>
+        <button class="btn btn-primary tech-font" id="resultContinueBtn">繼續 ▶</button>
       </div>
     </div>
   </div>
+</div>
 
+<div class="overlay" id="failOverlay">
+  <div class="overlay-card">
+    <div class="oc-title title-font">試煉失敗……</div>
+    <p>愛心用完了，語意連結中斷。重新集中精神，再挑戰一次這關吧！</p>
+    <button class="btn btn-primary tech-font" id="failRetryBtn">重新挑戰</button>
+  </div>
 </div>
 
 <script>
-/* ---------------- DATA ---------------- */
-const levels = [
-  {
-    title: "第 1 關：基本句型",
-    sub: "Sentence Patterns · S+V, S+V+O...",
-    icon: "1",
-    questions: [
-      {
-        tag: "S + V + O",
-        prompt: "The manager ___ the report before the meeting.",
-        zh: "經理在開會前___這份報告。",
-        options: ["reviewed", "review", "reviewing", "to review"],
-        correct: 0,
-        exp: "正確答案是 reviewed。這是 S+V+O 句型：The manager（S）+ reviewed（V，過去式動詞）+ the report（O）。動詞要能表達完整的時態，不能用原形或 to V。"
-      },
-      {
-        tag: "S + V + C",
-        prompt: "This new laptop ___ very lightweight.",
-        zh: "這台新筆電___很輕巧。",
-        options: ["is", "does", "makes", "has"],
-        correct: 0,
-        exp: "S+V+C 句型需要連綴動詞（linking verb）連接主詞和補語。is 後面接形容詞 lightweight 說明主詞的狀態，是正確用法。"
-      },
-      {
-        tag: "S + V + IO + DO",
-        prompt: "The company will send ___ a confirmation email.",
-        zh: "公司將會寄一封確認信給___。",
-        options: ["you", "your", "yours", "yourself"],
-        correct: 0,
-        exp: "send + 間接受詞(IO) + 直接受詞(DO) 結構中，間接受詞要用受格代名詞 you，表示「寄給你」。"
-      },
-      {
-        tag: "S + V + O + OC",
-        prompt: "The team considers the new plan ___ effective.",
-        zh: "團隊認為這個新計畫___有效。",
-        options: ["highly", "high", "higher", "height"],
-        correct: 0,
-        exp: "考受詞補語(OC)的句型：consider + O + OC，OC 是形容詞 effective，前面用副詞 highly 修飾形容詞，強調程度。"
-      },
-      {
-        tag: "S + V (不及物)",
-        prompt: "Sales ___ significantly last quarter.",
-        zh: "上一季銷售額___大幅上升。",
-        options: ["increased", "increase", "increasing", "increases"],
-        correct: 0,
-        exp: "increase 在此當不及物動詞用，主詞 Sales 對應過去式 increased，符合「上一季」這個過去時間點。"
-      }
-    ]
-  },
-  {
-    title: "第 2 關：主詞動詞一致",
-    sub: "Subject-Verb Agreement",
-    icon: "2",
-    questions: [
-      {
-        tag: "單複數一致",
-        prompt: "Each of the employees ___ required to attend the training.",
-        zh: "每位員工都___必須參加這次培訓。",
-        options: ["is", "are", "were", "have been"],
-        correct: 0,
-        exp: "Each of + 複數名詞，主詞視為單數，動詞用 is。Each、Every、either、neither 後面接的都是單數動詞。"
-      },
-      {
-        tag: "單複數一致",
-        prompt: "The data ___ that customer satisfaction has improved.",
-        zh: "數據___顯示顧客滿意度已提升。",
-        options: ["show", "shows", "showing", "to show"],
-        correct: 1,
-        exp: "在正式英文中 data 常被當作單數集合名詞看待（尤其商用英文），故用 shows。"
-      },
-      {
-        tag: "There be 句型",
-        prompt: "There ___ several reasons for the delay.",
-        zh: "延誤___好幾個原因。",
-        options: ["is", "was", "are", "has been"],
-        correct: 2,
-        exp: "There be 句型中，動詞要跟隨後面真正的主詞 several reasons（複數），所以用 are。"
-      },
-      {
-        tag: "距離最近原則",
-        prompt: "Neither the manager nor the staff members ___ available today.",
-        zh: "無論是經理還是員工們，今天都___無法出席。",
-        options: ["is", "are", "was", "has"],
-        correct: 1,
-        exp: "neither...nor... 連接兩個主詞時，動詞要跟離它最近的主詞一致，staff members 是複數，所以用 are。"
-      },
-      {
-        tag: "動名詞當主詞",
-        prompt: "Reviewing contracts carefully ___ essential for this position.",
-        zh: "仔細審閱合約___這個職位的必要條件。",
-        options: ["are", "is", "were", "have been"],
-        correct: 1,
-        exp: "動名詞片語（Reviewing contracts carefully）當主詞時視為單數，動詞用 is。"
-      }
-    ]
-  },
-  {
-    title: "第 3 關：分詞形容詞",
-    sub: "Participial Adjectives · V-ing vs V-ed",
-    icon: "3",
-    questions: [
-      {
-        tag: "現在分詞 vs 過去分詞",
-        prompt: "The ___ presentation impressed all the clients.",
-        zh: "這場___的簡報讓所有客戶印象深刻。",
-        options: ["impressed", "impressing", "impress", "impression"],
-        correct: 1,
-        exp: "主動、會讓人產生某種感覺，用現在分詞 impressing（令人印象深刻的）。修飾物時常用 -ing 形式。"
-      },
-      {
-        tag: "現在分詞 vs 過去分詞",
-        prompt: "The ___ employees received a bonus this month.",
-        zh: "___的員工這個月得到獎金。",
-        options: ["motivating", "motivated", "motivate", "motivation"],
-        correct: 1,
-        exp: "employees 是「被激勵」的一方（被動、感受者），要用過去分詞 motivated（感到被激勵的）。"
-      },
-      {
-        tag: "分詞構句",
-        prompt: "___ the budget, the finance team approved the project.",
-        zh: "在___預算之後，財務團隊核准了這個專案。",
-        options: ["Review", "Reviewing", "Reviewed", "To review"],
-        correct: 1,
-        exp: "分詞構句：finance team 是「審查」的主動執行者，且與主要子句主詞相同，所以用現在分詞 Reviewing 開頭。"
-      },
-      {
-        tag: "分詞構句（被動）",
-        prompt: "___ in 1998, the company now operates in 20 countries.",
-        zh: "___於1998年，這間公司現在在20個國家營運。",
-        options: ["Founding", "Founded", "Found", "To found"],
-        correct: 1,
-        exp: "公司是「被成立」的，屬於被動關係，分詞構句要用過去分詞 Founded 開頭。"
-      },
-      {
-        tag: "情緒動詞形容詞",
-        prompt: "Many customers were ___ with the fast delivery service.",
-        zh: "許多顧客對快速的送貨服務感到___。",
-        options: ["satisfying", "satisfied", "satisfy", "satisfaction"],
-        correct: 1,
-        exp: "customers 是感到滿意的一方（人的感受），情緒動詞的形容詞用法要用過去分詞 satisfied。"
-      }
-    ]
-  },
-  {
-    title: "第 4 關：被動語態",
-    sub: "Passive Voice",
-    icon: "4",
-    questions: [
-      {
-        tag: "基本被動式",
-        prompt: "The annual report ___ by the accounting department every year.",
-        zh: "年度報告每年都___會計部門___。",
-        options: ["prepares", "is prepared", "preparing", "has prepare"],
-        correct: 1,
-        exp: "report 是「被準備」的對象，用被動語態 be + p.p.：is prepared，符合現在式的常態事實。"
-      },
-      {
-        tag: "完成式被動",
-        prompt: "The new policy ___ already ___ to all staff.",
-        zh: "新政策已經___給所有員工___。",
-        options: ["has / announced", "have / announce", "is / announcing", "was / announce"],
-        correct: 0,
-        exp: "現在完成式被動：has been announced 的結構是 has + been + p.p.，這裡對應 has / announced。"
-      },
-      {
-        tag: "情態動詞被動",
-        prompt: "All applications ___ submitted by Friday.",
-        zh: "所有申請都___在星期五前提交。",
-        options: ["must", "must be", "must to be", "are must"],
-        correct: 1,
-        exp: "情態動詞的被動式：must be + p.p.，applications 是「被提交」的對象。"
-      },
-      {
-        tag: "by 行為者",
-        prompt: "The proposal was reviewed ___ the board of directors.",
-        zh: "這份提案___董事會審閱。",
-        options: ["with", "from", "by", "at"],
-        correct: 2,
-        exp: "被動語態中，引出真正執行動作的人或單位要用介系詞 by，表示「被...審閱」。"
-      },
-      {
-        tag: "主動 vs 被動判斷",
-        prompt: "The equipment ___ regularly to ensure safety.",
-        zh: "這些設備___定期檢查以確保安全。",
-        options: ["inspects", "is inspected", "inspecting", "inspect"],
-        correct: 1,
-        exp: "equipment 不會自己「檢查」，是被檢查的對象，所以要用被動語態 is inspected。"
-      }
-    ]
-  },
-  {
-    title: "第 5 關：介系詞與連接詞",
-    sub: "Prepositions & Conjunctions",
-    icon: "5",
-    questions: [
-      {
-        tag: "時間介系詞",
-        prompt: "The contract must be signed ___ the end of this month.",
-        zh: "合約必須在這個月底___簽署完成。",
-        options: ["until", "by", "since", "during"],
-        correct: 1,
-        exp: "by 表示「在...之前」的截止時間點，符合「月底前簽署完成」的語意。until 則強調動作持續到某時間點。"
-      },
-      {
-        tag: "原因連接詞",
-        prompt: "___ the heavy rain, the outdoor event was postponed.",
-        zh: "___大雨，戶外活動被延期了。",
-        options: ["Because", "Because of", "Although", "So that"],
-        correct: 1,
-        exp: "because of + 名詞片語（the heavy rain），因為後面接的是名詞而非子句，所以要用 because of 而非 because。"
-      },
-      {
-        tag: "對比連接詞",
-        prompt: "___ the price increase, sales remained strong.",
-        zh: "___價格上漲，銷售依然強勁。",
-        options: ["Despite", "Although", "However", "Because"],
-        correct: 0,
-        exp: "despite + 名詞片語，表示「儘管」，後面接名詞 the price increase；although 則要接完整子句。"
-      },
-      {
-        tag: "地點/方式介系詞",
-        prompt: "Please submit the form ___ email before Friday.",
-        zh: "請在星期五前___email___表格。",
-        options: ["in", "by", "at", "on"],
-        correct: 1,
-        exp: "by + 交通/傳遞方式（by email, by phone, by mail）表示「透過...方式」，是固定用法。"
-      },
-      {
-        tag: "目的連接詞",
-        prompt: "The team worked overtime ___ they could meet the deadline.",
-        zh: "團隊加班___他們能趕上截止日期。",
-        options: ["so that", "in order", "because", "unless"],
-        correct: 0,
-        exp: "so that + 子句表示「為了...目的」，符合語意；in order 需搭配 to V 而非直接接子句。"
-      }
-    ]
-  },
-  {
-    title: "第 6 關：商用 Email 用語",
-    sub: "Business Email Vocabulary",
-    icon: "6",
-    questions: [
-      {
-        tag: "Email 開頭",
-        prompt: "I am writing to ___ about the status of my order.",
-        zh: "我寫這封信是想___關於我訂單的狀況。",
-        options: ["inquire", "inquiry", "inquired", "inquiries"],
-        correct: 0,
-        exp: "write to + 動詞原形，表示寫信的目的，inquire（詢問）是動詞，符合文法結構。"
-      },
-      {
-        tag: "附件用語",
-        prompt: "Please find the invoice ___ for your reference.",
-        zh: "請查收___的發票以供參考。",
-        options: ["attach", "attached", "attaching", "attachment"],
-        correct: 1,
-        exp: "Please find + 受詞 + attached 是商用email的固定用法，attached 是過去分詞當形容詞，修飾 invoice「被附上的」。"
-      },
-      {
-        tag: "禮貌請求",
-        prompt: "We would ___ it if you could confirm your attendance by Monday.",
-        zh: "如果您能在星期一前確認出席，我們將會非常___。",
-        options: ["appreciate", "appreciating", "appreciated", "appreciation"],
-        correct: 0,
-        exp: "would appreciate it if... 是商用email中禮貌請求的固定句型，appreciate 為動詞原形。"
-      },
-      {
-        tag: "結尾用語",
-        prompt: "Please do not hesitate to ___ me if you have any questions.",
-        zh: "如有任何問題，請___與我聯繫。",
-        options: ["contact", "contacting", "contacted", "contacts"],
-        correct: 0,
-        exp: "hesitate to + 動詞原形，not hesitate to contact 是email結尾常見的固定用法，表示「請不吝聯繫」。"
-      },
-      {
-        tag: "正式用語替換",
-        prompt: "We regret to inform you that your application has been ___.",
-        zh: "我們很遺憾通知您，您的申請已被___。",
-        options: ["decline", "declined", "declining", "declination"],
-        correct: 1,
-        exp: "has been + 過去分詞是現在完成式被動，declined（被拒絕）符合正式email婉拒的用語。"
-      }
-    ]
+/* ---------------- DUST ---------------- */
+(function(){
+  const dust = document.getElementById('dust');
+  for(let i=0;i<14;i++){
+    const m = document.createElement('div');
+    m.className='mote';
+    const size = 2+Math.random()*3;
+    m.style.width=size+'px'; m.style.height=size+'px';
+    m.style.left = Math.random()*100+'%';
+    m.style.animationDuration = (10+Math.random()*14)+'s';
+    m.style.animationDelay = (Math.random()*10)+'s';
+    dust.appendChild(m);
   }
+})();
+
+/* ---------------- SPEECH ---------------- */
+function speak(text, rate){
+  try{
+    if(!('speechSynthesis' in window)) return;
+    speechSynthesis.cancel();
+    setTimeout(() => {
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang='en-US'; u.rate = rate || 0.72; u.pitch = 0.98;
+      speechSynthesis.speak(u);
+    }, 70);
+  }catch(e){}
+}
+function shuffleArray(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+/* ---------------- CURRICULUM DATA ---------------- */
+const stages = [
+  {
+    id:1, name:'新手村', sub:'Novice Village · TOEIC 250–400', icon:'🌱', unlocked:true,
+    grammarTags:['詞性基礎','Be動詞句型','現在簡單式'],
+    desc:'從最基礎的辦公室單字開始，學會用 Be動詞介紹人事物，並掌握現在簡單式的動詞變化。',
+    levels:[
+      {
+        id:'1-1', name:'商務初體驗', icon:'🏢', grammarPoint:'Be動詞與基礎句型 (S + be + C)',
+        grammarNote:'介紹人事物、描述狀態時，主詞要搭配對應的 Be動詞：I am、You/We/They are、He/She/It is。例如：This is my manager.',
+        words:[
+          {en:'office', pos:'n.', zh:'辦公室'}, {en:'manager', pos:'n.', zh:'經理'}, {en:'employee', pos:'n.', zh:'員工'},
+          {en:'meeting', pos:'n.', zh:'會議'}, {en:'schedule', pos:'n.', zh:'行程表'}, {en:'colleague', pos:'n.', zh:'同事'},
+          {en:'deadline', pos:'n.', zh:'截止日期'}, {en:'report', pos:'n.', zh:'報告'}, {en:'company', pos:'n.', zh:'公司'},
+          {en:'email', pos:'n.', zh:'電子郵件'}, {en:'phone', pos:'n.', zh:'電話'}, {en:'computer', pos:'n.', zh:'電腦'}
+        ],
+        quiz:[
+          { template:['The ',' is very busy today.'], word:'office', fullSentence:'The office is very busy today.', zh:'選出正確的 Be動詞', options:[['is',true],['are',false],['am',false],['be',false]], exp:'主詞 The office 是單數，要搭配 is。' },
+          { template:['My colleagues ',' in the meeting room now.'], word:'', fullSentence:'My colleagues are in the meeting room now.', zh:'選出正確的 Be動詞', options:[['are',true],['is',false],['am',false],['be',false]], exp:'主詞 My colleagues 是複數，要搭配 are。' },
+          { template:['This ',' an important email from the manager.'], word:'', fullSentence:'This is an important email from the manager.', zh:'選出正確的 Be動詞', options:[['is',true],['are',false],['am',false],['be',false]], exp:'This 是單數指示代名詞，搭配 is。' },
+          { template:['I ',' an employee at this company.'], word:'', fullSentence:'I am an employee at this company.', zh:'選出正確的 Be動詞', options:[['am',true],['is',false],['are',false],['be',false]], exp:'主詞 I 固定搭配 am。' },
+          { template:['The deadline for the report ',' tomorrow.'], word:'', fullSentence:'The deadline for the report is tomorrow.', zh:'選出正確的 Be動詞', options:[['is',true],['are',false],['am',false],['be',false]], exp:'The deadline 是單數主詞，搭配 is。' },
+          { template:['These computers ',' very old.'], word:'', fullSentence:'These computers are very old.', zh:'選出正確的 Be動詞', options:[['are',true],['is',false],['am',false],['be',false]], exp:'These computers 是複數主詞，搭配 are。' }
+        ]
+      },
+      {
+        id:'1-2', name:'日常對話', icon:'💬', grammarPoint:'現在簡單式 (Present Simple)',
+        grammarNote:'描述習慣性動作或固定事實時用現在簡單式。第三人稱單數（he/she/it）動詞要加 -s 或 -es，例如：She answers emails every morning.',
+        words:[
+          {en:'work', pos:'v.', zh:'工作'}, {en:'arrive', pos:'v.', zh:'到達'}, {en:'leave', pos:'v.', zh:'離開'},
+          {en:'start', pos:'v.', zh:'開始'}, {en:'finish', pos:'v.', zh:'完成'}, {en:'answer', pos:'v.', zh:'回答／接聽'},
+          {en:'call', pos:'v.', zh:'打電話'}, {en:'send', pos:'v.', zh:'寄送'}, {en:'receive', pos:'v.', zh:'收到'},
+          {en:'attend', pos:'v.', zh:'參加'}, {en:'discuss', pos:'v.', zh:'討論'}, {en:'prepare', pos:'v.', zh:'準備'}
+        ],
+        quiz:[
+          { template:['She ',' the office at 9 AM every day.'], fullSentence:'She arrives at the office at 9 AM every day.', zh:'選出正確的動詞形式', options:[['arrives',true],['arrive',false],['arriving',false],['arrived',false]], exp:'主詞 She 是第三人稱單數，動詞要加 -s：arrives。' },
+          { template:['He always ',' his emails before lunch.'], fullSentence:'He always answers his emails before lunch.', zh:'選出正確的動詞形式', options:[['answers',true],['answer',false],['answering',false],['answered',false]], exp:'主詞 He 是第三人稱單數，動詞要加 -s：answers。' },
+          { template:['The manager ',' every meeting on time.'], fullSentence:'The manager attends every meeting on time.', zh:'選出正確的動詞形式', options:[['attends',true],['attend',false],['attending',false],['attended',false]], exp:'The manager 是第三人稱單數，動詞加 -s：attends。' },
+          { template:['My colleague ',' reports every Friday.'], fullSentence:'My colleague sends reports every Friday.', zh:'選出正確的動詞形式', options:[['sends',true],['send',false],['sending',false],['sent',false]], exp:'My colleague 是第三人稱單數，動詞加 -s：sends。' },
+          { template:['I ',' work at 8 AM every morning.'], fullSentence:'I start work at 8 AM every morning.', zh:'選出正確的動詞形式', options:[['start',true],['starts',false],['starting',false],['started',false]], exp:'主詞 I 不加 -s，用原形動詞 start。' },
+          { template:['We ',' the project before the deadline.'], fullSentence:'We finish the project before the deadline.', zh:'選出正確的動詞形式', options:[['finish',true],['finishes',false],['finishing',false],['finished',false]], exp:'主詞 We 是複數，不加 -s，用原形動詞 finish。' }
+        ]
+      },
+      {
+        id:'1-3', name:'詞性判斷魔王', icon:'🗿', boss:true, grammarPoint:'詞性基礎 (Parts of Speech)',
+        grammarNote:'同一個字根常有名詞、動詞、形容詞等不同形式，例如 discuss（討論，動詞）／discussion（討論，名詞）。判斷句子需要哪種詞性，是解題關鍵。',
+        words:[
+          {en:'employ', pos:'v.', zh:'雇用'}, {en:'employee', pos:'n.', zh:'員工'}, {en:'manage', pos:'v.', zh:'管理'},
+          {en:'manager', pos:'n.', zh:'經理'}, {en:'prepare', pos:'v.', zh:'準備'}, {en:'preparation', pos:'n.', zh:'準備工作'},
+          {en:'discuss', pos:'v.', zh:'討論'}, {en:'discussion', pos:'n.', zh:'討論（名詞）'}, {en:'schedule', pos:'v./n.', zh:'安排／行程'},
+          {en:'report', pos:'v./n.', zh:'報告（動詞／名詞）'}, {en:'busy', pos:'adj.', zh:'忙碌的'}, {en:'important', pos:'adj.', zh:'重要的'}
+        ],
+        quiz:[
+          { template:['The ',' works very hard every day.'], fullSentence:'The employee works very hard every day.', zh:'這裡需要哪種詞性？', options:[['employee',true],['employ',false],['employed',false],['employing',false]], exp:'空格前有 The，後面接動詞 works，代表這裡需要「名詞」employee（員工）。' },
+          { template:['Our manager ',' ten employees in this office.'], fullSentence:'Our manager manages ten employees in this office.', zh:'這裡需要哪種詞性？', options:[['manages',true],['manager',false],['management',false],['managed',false]], exp:'主詞 Our manager 後面需要「動詞」，第三人稱單數加 -s：manages。' },
+          { template:['We need more time for ',' before the meeting.'], fullSentence:'We need more time for preparation before the meeting.', zh:'這裡需要哪種詞性？', options:[['preparation',true],['prepare',false],['prepared',false],['preparing',false]], exp:'for 是介系詞，後面要接「名詞」：preparation（準備工作）。' },
+          { template:["Let's ",' this report together.'], fullSentence:"Let's discuss this report together.", zh:'這裡需要哪種詞性？', options:[['discuss',true],['discussion',false],['discussed',false],['discussing',false]], exp:"Let's 後面要接原形「動詞」：discuss（討論）。" },
+          { template:['This ',' is very important for the company.'], fullSentence:'This discussion is very important for the company.', zh:'這裡需要哪種詞性？', options:[['discussion',true],['discuss',false],['discussed',false],['discussing',false]], exp:'This 後面、is 前面需要「名詞」當主詞：discussion（討論）。' },
+          { template:['Please ',' the meeting for next Monday.'], fullSentence:'Please schedule the meeting for next Monday.', zh:'這裡需要哪種詞性？', options:[['schedule',true],['schedules',false],['scheduling',false],['scheduled',false]], exp:'Please 後面接原形「動詞」：schedule（安排）。' },
+          { template:['The office is very ',' this week.'], fullSentence:'The office is very busy this week.', zh:'這裡需要哪種詞性？', options:[['busy',true],['business',false],['busily',false],['busies',false]], exp:'is very 後面要接「形容詞」：busy（忙碌的）。' },
+          { template:['This is an ',' email from the manager.'], fullSentence:'This is an important email from the manager.', zh:'這裡需要哪種詞性？', options:[['important',true],['importance',false],['importantly',false],['import',false]], exp:'an 後面、名詞 email 前面要用「形容詞」：important（重要的）。' }
+        ]
+      }
+    ]
+  },
+  {
+    id:2, name:'語言森林', sub:'Language Forest · TOEIC 400–550', icon:'🌲', unlocked:false,
+    grammarTags:['過去式','未來式','主詞動詞一致'],
+    desc:'深入迷霧森林，學會用過去式回顧旅程、用未來式規劃計畫，並掌握主詞動詞一致的判斷技巧。',
+    levels:[
+      {
+        id:'2-1', name:'昨日的旅程', icon:'🧳', grammarPoint:'過去簡單式 (Past Simple)',
+        grammarNote:'過去簡單式用來描述過去已發生的動作。規則動詞字尾加 -ed，不規則動詞要記住特殊變化，例如 lose → lost、find → found。',
+        words:[
+          {en:'journey', pos:'n.', zh:'旅程'}, {en:'airport', pos:'n.', zh:'機場'}, {en:'ticket', pos:'n.', zh:'票'},
+          {en:'luggage', pos:'n.', zh:'行李'}, {en:'passport', pos:'n.', zh:'護照'}, {en:'hotel', pos:'n.', zh:'旅館'},
+          {en:'depart', pos:'v.', zh:'出發'}, {en:'explore', pos:'v.', zh:'探索'}, {en:'discover', pos:'v.', zh:'發現'},
+          {en:'purchase', pos:'v.', zh:'購買'}, {en:'lose', pos:'v.', zh:'遺失'}, {en:'find', pos:'v.', zh:'找到'}
+        ],
+        quiz:[
+          { template:['We ',' our journey early in the morning.'], fullSentence:'We departed our journey early in the morning.', zh:'選出正確的過去式動詞', options:[['departed',true],['depart',false],['departing',false],['departs',false]], exp:'規則動詞過去式加 -ed：depart → departed。' },
+          { template:['They ',' the old city for three days.'], fullSentence:'They explored the old city for three days.', zh:'選出正確的過去式動詞', options:[['explored',true],['explore',false],['exploring',false],['explores',false]], exp:'規則動詞過去式加 -ed：explore → explored。' },
+          { template:['I ',' a new restaurant near the hotel.'], fullSentence:'I discovered a new restaurant near the hotel.', zh:'選出正確的過去式動詞', options:[['discovered',true],['discover',false],['discovering',false],['discovers',false]], exp:'規則動詞過去式加 -ed：discover → discovered。' },
+          { template:['She ',' two tickets for the concert.'], fullSentence:'She purchased two tickets for the concert.', zh:'選出正確的過去式動詞', options:[['purchased',true],['purchase',false],['purchasing',false],['purchases',false]], exp:'規則動詞過去式加 -ed：purchase → purchased。' },
+          { template:['He ',' his passport at the airport yesterday.'], fullSentence:'He lost his passport at the airport yesterday.', zh:'選出正確的過去式動詞', options:[['lost',true],['lose',false],['losing',false],['loses',false]], exp:'lose 是不規則動詞，過去式是 lost，要特別記住。' },
+          { template:['Luckily, we ',' the luggage before the flight.'], fullSentence:'Luckily, we found the luggage before the flight.', zh:'選出正確的過去式動詞', options:[['found',true],['find',false],['finding',false],['finds',false]], exp:'find 是不規則動詞，過去式是 found，不是 finded。' }
+        ]
+      },
+      {
+        id:'2-2', name:'明日計畫', icon:'🗓️', grammarPoint:'未來式 (will / be going to)',
+        grammarNote:'表示未來的事，可以用 will + 原形動詞（臨時決定、承諾），或 be going to + 原形動詞（已有的計畫）。例如：I will call you. / We are going to launch the product.',
+        words:[
+          {en:'launch', pos:'v.', zh:'推出／發表'}, {en:'plan', pos:'n./v.', zh:'計畫'}, {en:'project', pos:'n.', zh:'專案'},
+          {en:'budget', pos:'n.', zh:'預算'}, {en:'strategy', pos:'n.', zh:'策略'}, {en:'goal', pos:'n.', zh:'目標'},
+          {en:'expand', pos:'v.', zh:'擴展'}, {en:'invest', pos:'v.', zh:'投資'}, {en:'announce', pos:'v.', zh:'宣布'},
+          {en:'release', pos:'v.', zh:'發布'}, {en:'upgrade', pos:'v.', zh:'升級'}, {en:'improve', pos:'v.', zh:'改善'}
+        ],
+        quiz:[
+          { template:['We ',' release the update this Friday.'], fullSentence:'We will release the update this Friday.', zh:'選出正確的未來式用字', options:[['will',true],['are',false],['do',false],['did',false]], exp:'will + 原形動詞表示未來會做的事：will release。' },
+          { template:['She ',' announce her decision next week.'], fullSentence:'She will announce her decision next week.', zh:'選出正確的未來式用字', options:[['will',true],['is',false],['does',false],['did',false]], exp:'will + 原形動詞：will announce（將會宣布）。' },
+          { template:['I promise I ',' improve my performance.'], fullSentence:'I promise I will improve my performance.', zh:'選出正確的未來式用字', options:[['will',true],['am',false],['do',false],['did',false]], exp:'表示承諾時常用 will：I will improve...' },
+          { template:['The company is ',' to expand into Asia next year.'], fullSentence:'The company is going to expand into Asia next year.', zh:'選出正確的未來式用字', options:[['going',true],['go',false],['goes',false],['gone',false]], exp:'be going to 表示已經計畫好的未來：is going to expand。' },
+          { template:['We are ',' to invest more in R&D.'], fullSentence:'We are going to invest more in R&D.', zh:'選出正確的未來式用字', options:[['going',true],['go',false],['goes',false],['gone',false]], exp:'be going to 的固定結構：are going to invest。' },
+          { template:['They are ',' to upgrade the whole system.'], fullSentence:'They are going to upgrade the whole system.', zh:'選出正確的未來式用字', options:[['going',true],['go',false],['goes',false],['gone',false]], exp:'be going to 的固定結構：are going to upgrade。' }
+        ]
+      },
+      {
+        id:'2-3', name:'時態亂流魔王', icon:'🌀', boss:true, grammarPoint:'主詞動詞一致 + 時態總複習',
+        grammarNote:'單數主詞（everyone、each、information...）要搭配單數動詞；複數主詞（several、both...）要搭配複數動詞。同時要留意句中的時間線索（yesterday、next week）來判斷該用過去式還是未來式。',
+        words:[
+          {en:'everyone', pos:'pron.', zh:'每個人'}, {en:'staff', pos:'n.', zh:'全體員工'}, {en:'data', pos:'n.', zh:'數據'},
+          {en:'information', pos:'n.', zh:'資訊'}, {en:'series', pos:'n.', zh:'系列'}, {en:'each', pos:'det.', zh:'每一個'},
+          {en:'several', pos:'det.', zh:'幾個'}, {en:'both', pos:'det.', zh:'兩者都'}, {en:'journey', pos:'n.', zh:'旅程'},
+          {en:'depart', pos:'v.', zh:'出發'}, {en:'launch', pos:'v.', zh:'推出'}, {en:'improve', pos:'v.', zh:'改善'}
+        ],
+        quiz:[
+          { template:['Everyone ',' ready for the trip yesterday.'], fullSentence:'Everyone was ready for the trip yesterday.', zh:'選出正確的 Be動詞', options:[['was',true],['were',false],['is',false],['are',false]], exp:'Everyone 是單數代名詞，過去式要搭配 was。' },
+          { template:['Each employee ',' present at the meeting yesterday.'], fullSentence:'Each employee was present at the meeting yesterday.', zh:'選出正確的 Be動詞', options:[['was',true],['were',false],['is',false],['are',false]], exp:'Each + 名詞視為單數，搭配 was。' },
+          { template:['Several employees ',' absent last Monday.'], fullSentence:'Several employees were absent last Monday.', zh:'選出正確的 Be動詞', options:[['were',true],['was',false],['is',false],['are',false]], exp:'Several 表示「幾個」，是複數，搭配 were。' },
+          { template:['Both managers ',' going to attend the conference next week.'], fullSentence:'Both managers are going to attend the conference next week.', zh:'選出正確的 Be動詞', options:[['are',true],['is',false],['was',false],['were',false]], exp:'Both 表示「兩者都」，是複數，搭配 are。' },
+          { template:['The information ',' very useful for our project.'], fullSentence:'The information is very useful for our project.', zh:'選出正確的 Be動詞', options:[['is',true],['are',false],['was',false],['were',false]], exp:'information 是不可數名詞，視為單數，搭配 is。' },
+          { template:["This data ",' very important last year, but now it is outdated.'], fullSentence:'This data was very important last year, but now it is outdated.', zh:'選出正確的 Be動詞', options:[['was',true],['were',false],['is',false],['are',false]], exp:'data 在商用英文中常視為單數，過去式搭配 was。' },
+          { template:['The new product series ',' launch next spring.'], fullSentence:'The new product series will launch next spring.', zh:'選出正確的未來式用字', options:[['will',true],['is',false],['are',false],['was',false]], exp:'未來計畫用 will + 原形動詞：will launch。' },
+          { template:['We ',' our journey early yesterday morning.'], fullSentence:'We departed our journey early yesterday morning.', zh:'選出正確的過去式動詞', options:[['departed',true],['depart',false],['departs',false],['departing',false]], exp:'過去式動詞搭配時間副詞 yesterday morning：departed。' }
+        ]
+      }
+    ]
+  },
+  {
+    id:3, name:'迷霧商業區', sub:'Misty Business District · TOEIC 550–700', icon:'🏙️', unlocked:false,
+    grammarTags:['現在完成式','被動語態','分詞與動名詞'],
+    desc:'穿越迷霧籠罩的商業區，學會用現在完成式談經驗與成就、用被動語態描述公司流程，並破解分詞與動名詞的偽裝。',
+    levels:[
+      {
+        id:'3-1', name:'職涯成就', icon:'🏆', grammarPoint:'現在完成式 (Present Perfect)',
+        grammarNote:'現在完成式（have/has + 過去分詞）表示過去發生、且與現在有關聯的動作或經驗，常搭配 already、yet、since、for 等字。例如：She has already finished the report.',
+        words:[
+          {en:'achieve', pos:'v.', zh:'達成'}, {en:'complete', pos:'v.', zh:'完成'}, {en:'earn', pos:'v.', zh:'賺得／獲得'},
+          {en:'gain', pos:'v.', zh:'獲得／增加'}, {en:'promote', pos:'v.', zh:'使升遷'}, {en:'experience', pos:'n.', zh:'經驗'},
+          {en:'achievement', pos:'n.', zh:'成就'}, {en:'certificate', pos:'n.', zh:'證書'}, {en:'career', pos:'n.', zh:'職涯'},
+          {en:'already', pos:'adv.', zh:'已經'}, {en:'yet', pos:'adv.', zh:'還（未）'}, {en:'since', pos:'prep./conj.', zh:'自從'}
+        ],
+        quiz:[
+          { template:['She has already ',' the annual report.'], fullSentence:'She has already completed the annual report.', zh:'選出正確的過去分詞', options:[['completed',true],['complete',false],['completing',false],['completes',false]], exp:'have/has + 過去分詞：has completed。' },
+          { template:['He has ',' two promotions since he joined the company.'], fullSentence:'He has earned two promotions since he joined the company.', zh:'選出正確的過去分詞', options:[['earned',true],['earn',false],['earning',false],['earns',false]], exp:'has + 過去分詞：has earned（獲得）。' },
+          { template:['The team has ',' a lot of experience this year.'], fullSentence:'The team has gained a lot of experience this year.', zh:'選出正確的過去分詞', options:[['gained',true],['gain',false],['gaining',false],['gains',false]], exp:'has + 過去分詞：has gained（獲得）。' },
+          { template:["I haven't finished the project ",'.'], fullSentence:"I haven't finished the project yet.", zh:'選出正確的副詞', options:[['yet',true],['already',false],['since',false],['ever',false]], exp:'否定句常用 yet 放句尾，表示「還（沒）」。' },
+          { template:['We have worked together ',' 2019.'], fullSentence:'We have worked together since 2019.', zh:'選出正確的介系詞', options:[['since',true],['for',false],['already',false],['yet',false]], exp:'since + 明確的時間點（2019），for 則接一段時間長度。' },
+          { template:['She has ',' achieved her career goal.'], fullSentence:'She has already achieved her career goal.', zh:'選出正確的副詞', options:[['already',true],['since',false],['yet',false],['ever',false]], exp:'already 常放在 have/has 與過去分詞之間，表示「已經」。' }
+        ]
+      },
+      {
+        id:'3-2', name:'自動化辦公室', icon:'⚙️', grammarPoint:'被動語態 (Passive Voice)',
+        grammarNote:'被動語態（be + 過去分詞）強調動作的接受者而非執行者，常見於公告與流程說明。例如：The report is reviewed by the manager every week。時態不同，be動詞形式也會跟著變化。',
+        words:[
+          {en:'review', pos:'v.', zh:'審查'}, {en:'approve', pos:'v.', zh:'核准'}, {en:'reject', pos:'v.', zh:'拒絕'},
+          {en:'submit', pos:'v.', zh:'提交'}, {en:'process', pos:'v.', zh:'處理'}, {en:'install', pos:'v.', zh:'安裝'},
+          {en:'update', pos:'v.', zh:'更新'}, {en:'repair', pos:'v.', zh:'修理'}, {en:'deliver', pos:'v.', zh:'交付'},
+          {en:'inspect', pos:'v.', zh:'檢查'}, {en:'document', pos:'n.', zh:'文件'}, {en:'policy', pos:'n.', zh:'政策'}
+        ],
+        quiz:[
+          { template:['The report is ',' by the manager every week.'], fullSentence:'The report is reviewed by the manager every week.', zh:'選出正確的過去分詞', options:[['reviewed',true],['review',false],['reviewing',false],['reviews',false]], exp:'be動詞 + 過去分詞：is reviewed（被審查）。' },
+          { template:['The request has been ',' by the director.'], fullSentence:'The request has been approved by the director.', zh:'選出正確的過去分詞', options:[['approved',true],['approve',false],['approving',false],['approves',false]], exp:'has been + 過去分詞：has been approved（已被核准）。' },
+          { template:['This proposal was ',' due to budget issues.'], fullSentence:'This proposal was rejected due to budget issues.', zh:'選出正確的過去分詞', options:[['rejected',true],['reject',false],['rejecting',false],['rejects',false]], exp:'was + 過去分詞：was rejected（被拒絕）。' },
+          { template:['The new software will be ',' next Monday.'], fullSentence:'The new software will be installed next Monday.', zh:'選出正確的過去分詞', options:[['installed',true],['install',false],['installing',false],['installs',false]], exp:'will be + 過去分詞：will be installed（將被安裝）。' },
+          { template:['The machine is being ',' by our technician.'], fullSentence:'The machine is being repaired by our technician.', zh:'選出正確的過去分詞', options:[['repaired',true],['repair',false],['repairing',false],['repairs',false]], exp:'is being + 過去分詞：is being repaired（正在被修理）。' },
+          { template:['The package was ',' to the wrong address.'], fullSentence:'The package was delivered to the wrong address.', zh:'選出正確的過去分詞', options:[['delivered',true],['deliver',false],['delivering',false],['delivers',false]], exp:'was + 過去分詞：was delivered（被送達）。' }
+        ]
+      },
+      {
+        id:'3-3', name:'分詞幻影魔王', icon:'👻', boss:true, grammarPoint:'分詞與動名詞 (Participles & Gerunds)',
+        grammarNote:'現在分詞（V-ing）當形容詞時表示「主動、令人感到...」；過去分詞（V-ed）當形容詞時表示「被動、感到...的」。動名詞（V-ing）則像名詞一樣，可以當主詞或放在特定動詞（finish、avoid...）後面。',
+        words:[
+          {en:'interest', pos:'v.', zh:'使感興趣'}, {en:'bore', pos:'v.', zh:'使無聊'}, {en:'excite', pos:'v.', zh:'使興奮'},
+          {en:'confuse', pos:'v.', zh:'使困惑'}, {en:'exhaust', pos:'v.', zh:'使筋疲力盡'}, {en:'satisfy', pos:'v.', zh:'使滿意'},
+          {en:'presentation', pos:'n.', zh:'簡報'}, {en:'training', pos:'n.', zh:'訓練'}, {en:'planning', pos:'n.', zh:'規劃'},
+          {en:'reporting', pos:'n.', zh:'報告（動名詞用法）'}, {en:'avoid', pos:'v.', zh:'避免'}, {en:'finish', pos:'v.', zh:'完成'}
+        ],
+        quiz:[
+          { template:['The presentation was very ','.'], fullSentence:'The presentation was very interesting.', zh:'這裡需要哪種分詞形式？', options:[['interesting',true],['interested',false],['interest',false],['interests',false]], exp:'簡報本身「引起興趣」，用現在分詞 interesting（主動、令人感興趣的）。' },
+          { template:['The employees felt ',' after the long meeting.'], fullSentence:'The employees felt bored after the long meeting.', zh:'這裡需要哪種分詞形式？', options:[['bored',true],['boring',false],['bore',false],['bores',false]], exp:'員工是「感到無聊」的一方，用過去分詞 bored（被動、感到...的）。' },
+          { template:['This is an ',' opportunity for our team.'], fullSentence:'This is an exciting opportunity for our team.', zh:'這裡需要哪種分詞形式？', options:[['exciting',true],['excited',false],['excite',false],['excites',false]], exp:'opportunity（機會）本身「令人興奮」，用現在分詞 exciting。' },
+          { template:['I was ',' by the confusing instructions.'], fullSentence:'I was confused by the confusing instructions.', zh:'這裡需要哪種分詞形式？', options:[['confused',true],['confusing',false],['confuse',false],['confuses',false]], exp:'「我」是感到困惑的一方，用過去分詞 confused。' },
+          { template:['After the trip, everyone felt ','.'], fullSentence:'After the trip, everyone felt exhausted.', zh:'這裡需要哪種分詞形式？', options:[['exhausted',true],['exhausting',false],['exhaust',false],['exhausts',false]], exp:'大家是「感到筋疲力盡」的一方，用過去分詞 exhausted。' },
+          { template:['',' is important for career growth.'], fullSentence:'Training is important for career growth.', zh:'這裡需要哪種詞性當主詞？', options:[['Training',true],['Trained',false],['Trains',false],['To train',false]], exp:'動名詞（V-ing）可以當主詞，像名詞一樣使用：Training is important。' },
+          { template:['We finished ',' the report before the deadline.'], fullSentence:'We finished preparing the report before the deadline.', zh:'finish 後面要接哪種形式？', options:[['preparing',true],['prepare',false],['prepared',false],['prepares',false]], exp:'finish 後面要接動名詞（V-ing）：finished preparing。' },
+          { template:['You should avoid ',' the report late.'], fullSentence:'You should avoid submitting the report late.', zh:'avoid 後面要接哪種形式？', options:[['submitting',true],['submit',false],['submitted',false],['submits',false]], exp:'avoid 後面要接動名詞（V-ing）：avoid submitting。' }
+        ]
+      }
+    ]
+  },
+  { id:4, name:'遺跡深淵', sub:'Ruins of the Abyss · TOEIC 700–850', icon:'🗿', unlocked:false, grammarTags:['比較級／最高級','關係子句','連接詞與子句'], desc:'即將推出：進階句構與子句。', levels:[] },
+  { id:5, name:'魔王之塔', sub:'The Final Tower · TOEIC 850–990', icon:'👑', unlocked:false, grammarTags:['條件句','假設語氣','倒裝與強調句'], desc:'即將推出：多益最高階文法，最終魔王戰。', levels:[] }
 ];
 
 /* ---------------- STATE ---------------- */
-let totalStars = 0;
-let totalScore = 0;
-let levelStars = new Array(levels.length).fill(0);
-let unlockedUpTo = 0; // index of highest unlocked level
-
-let currentLevelIndex = 0;
-let currentQIndex = 0;
+let currentStageIdx = 0;
+let currentLevel = null;
+let learnIdx = 0;
+let learnFlipped = false;
+let activeQuiz = [];
+let quizIdx = 0;
 let hearts = 3;
 let correctCount = 0;
 let answered = false;
+let currentOptions = [];
+let currentCorrectIndex = -1;
+let totalVocabLearned = new Set();
+let stageProgress = {}; // stageId -> array of level completion {stars}
+stages.forEach(s => stageProgress[s.id] = {});
 
-/* ---------------- RENDER MAP ---------------- */
-function renderMap(){
-  document.getElementById('totalStars').textContent = totalStars;
-  document.getElementById('totalScore').textContent = totalScore;
+function updateTowerVocabCount(){ document.getElementById('towerVocabCount').textContent = totalVocabLearned.size; }
 
-  const pathList = document.getElementById('pathList');
-  pathList.innerHTML = '';
-  levels.forEach((lvl, i) => {
-    const state = i > unlockedUpTo ? 'locked' : (levelStars[i] > 0 ? 'done' : 'unlocked');
-    const row = document.createElement('div');
-    row.className = 'level-row';
-
-    const starsHtml = [1,2,3].map(n =>
-      `<span class="${n <= levelStars[i] ? 'lit' : ''}">★</span>`
-    ).join('');
-
-    row.innerHTML = `
-      <div class="level-node ${state}" onclick="${state !== 'locked' ? `startLevel(${i})` : ''}">
-        ${state === 'locked' ? '🔒' : (state === 'done' ? '✓' : lvl.icon)}
-      </div>
-      <div class="level-info">
-        <div class="lv-title">${lvl.title}</div>
-        <div class="lv-sub">${lvl.sub}</div>
-        <div class="level-stars">${starsHtml}</div>
-      </div>
-    `;
-    pathList.appendChild(row);
-  });
-}
-
+/* ---------------- SCREEN NAV ---------------- */
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
+function showTower(){ renderTower(); showScreen('towerScreen'); }
+function showStageFromLevel(){ renderStage(currentStageIdx); showScreen('stageScreen'); }
 
-function backToMap(){
-  renderMap();
-  showScreen('mapScreen');
+/* ---------------- TOWER RENDER ---------------- */
+function renderTower(){
+  updateTowerVocabCount();
+  const wrap = document.getElementById('towerPath');
+  wrap.innerHTML = '';
+  stages.forEach((s, i) => {
+    const doneCount = Object.values(stageProgress[s.id]).length;
+    const state = !s.unlocked ? 'locked' : (doneCount >= s.levels.length && s.levels.length>0 ? 'done' : 'unlocked');
+    const row = document.createElement('div');
+    row.className = 'stage-row';
+    row.innerHTML = `
+      <div class="stage-node ${state}" onclick="${s.unlocked ? `enterStage(${i})` : ''}">${state==='locked' ? '🔒' : s.icon}</div>
+      <div class="stage-info">
+        <div class="stage-name">${s.name}</div>
+        <div class="stage-sub">${s.sub}</div>
+        <div class="stage-grammar">${s.grammarTags.map(g=>`<span class="grammar-chip">${g}</span>`).join('')}</div>
+      </div>`;
+    wrap.appendChild(row);
+  });
 }
 
-/* ---------------- QUIZ LOGIC ---------------- */
-function startLevel(index){
-  currentLevelIndex = index;
-  currentQIndex = 0;
-  hearts = 3;
+function enterStage(i){
+  currentStageIdx = i;
+  renderStage(i);
+  showScreen('stageScreen');
+}
+
+function renderStage(i){
+  const s = stages[i];
+  document.getElementById('stageTitle').textContent = s.icon + '  ' + s.name;
+  document.getElementById('stageDesc').textContent = s.desc;
+  const list = document.getElementById('levelList');
+  list.innerHTML = '';
+  if(s.levels.length === 0){
+    list.innerHTML = `<p class="desc">此階層的關卡正在鍛造中，敬請期待後續更新！</p>`;
+    return;
+  }
+  s.levels.forEach((lvl, idx) => {
+    const prog = stageProgress[s.id][lvl.id];
+    const locked = idx > 0 && !stageProgress[s.id][s.levels[idx-1].id];
+    const card = document.createElement('div');
+    card.className = 'level-card' + (lvl.boss ? ' boss' : '') + (locked ? ' locked' : '');
+    const starsHtml = [1,2,3].map(n => `<span class="${prog && n<=prog.stars ? 'lit':''}">★</span>`).join('');
+    card.innerHTML = `
+      <div class="level-icon">${locked ? '🔒' : lvl.icon}</div>
+      <div class="level-body">
+        <div class="level-name">${lvl.name}${lvl.boss ? '　👑' : ''}</div>
+        <div class="level-meta">${lvl.grammarPoint} · ${lvl.words.length} 個單字</div>
+        <div class="level-stars">${starsHtml}</div>
+      </div>`;
+    if(!locked) card.onclick = () => enterLevel(s, lvl);
+    list.appendChild(card);
+  });
+}
+
+/* ---------------- LEVEL INTRO ---------------- */
+function enterLevel(stage, level){
+  currentLevel = { stage, level };
+  document.getElementById('introTitle').textContent = level.icon + ' ' + level.name;
+  document.getElementById('introGrammarNote').innerHTML = `<strong style="color:var(--cyan);">📐 文法重點：${level.grammarPoint}</strong><br><br>${level.grammarNote}<br><br>本關將學習 ${level.words.length} 個新單字，接著進入試煉戰鬥。`;
+  showScreen('introScreen');
+}
+
+/* ---------------- LEARN PHASE ---------------- */
+function startLearnPhase(){
+  learnIdx = 0; learnFlipped = false;
+  renderLearnCard();
+  showScreen('learnScreen');
+}
+
+function renderLearnCard(){
+  const words = currentLevel.level.words;
+  const w = words[learnIdx];
+  document.getElementById('learnCounter').textContent = (learnIdx+1) + ' / ' + words.length;
+  document.getElementById('learnWord').textContent = w.en;
+  document.getElementById('learnPos').textContent = w.pos;
+  learnFlipped = false;
+  document.getElementById('learnMeaning').textContent = '點擊卡片查看意思';
+  document.getElementById('learnHint').style.display = 'block';
+
+  document.getElementById('learnPrevBtn').disabled = learnIdx === 0;
+  document.getElementById('learnNextBtn').textContent = learnIdx === words.length-1 ? '完成 ✓' : '下一個 →';
+
+  const dots = document.getElementById('learnDots');
+  dots.innerHTML = '';
+  words.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i===learnIdx ? ' active' : '');
+    dots.appendChild(d);
+  });
+
+  document.getElementById('startTrialBtn').style.display = learnIdx === words.length-1 ? 'block' : 'none';
+  document.getElementById('learnAudioBtn').onclick = () => speak(w.en, 0.7);
+  setTimeout(() => speak(w.en, 0.7), 250);
+}
+
+document.querySelector('.learn-card').addEventListener('click', function(e){
+  if(e.target.closest('.learn-audio')) return;
+  const words = currentLevel.level.words;
+  const w = words[learnIdx];
+  learnFlipped = !learnFlipped;
+  document.getElementById('learnMeaning').textContent = learnFlipped ? w.zh : '點擊卡片查看意思';
+  document.getElementById('learnHint').style.display = learnFlipped ? 'none' : 'block';
+});
+
+document.getElementById('learnPrevBtn').onclick = () => { if(learnIdx>0){ learnIdx--; renderLearnCard(); } };
+document.getElementById('learnNextBtn').onclick = () => {
+  const words = currentLevel.level.words;
+  if(learnIdx < words.length-1){ learnIdx++; renderLearnCard(); }
+};
+document.getElementById('startTrialBtn').onclick = () => startBattlePhase();
+
+/* ---------------- BATTLE / TRIAL PHASE ---------------- */
+function startBattlePhase(){
+  activeQuiz = shuffleArray(currentLevel.level.quiz);
+  quizIdx = 0;
+  hearts = currentLevel.level.boss ? 2 : 3;
   correctCount = 0;
-  document.getElementById('gameOverPanel').classList.remove('show');
-  document.getElementById('optionsList').style.display = 'flex';
-  renderQuestion();
-  showScreen('quizScreen');
+  document.getElementById('failOverlay').classList.remove('show');
+  renderBattleQuestion();
+  showScreen('battleScreen');
 }
 
 function renderHearts(){
   const el = document.getElementById('heartsDisplay');
   el.innerHTML = '';
-  for(let i=0;i<3;i++){
-    el.innerHTML += i < hearts ? '❤️' : '🖤';
-  }
+  const max = currentLevel.level.boss ? 2 : 3;
+  for(let i=0;i<max;i++) el.innerHTML += i < hearts ? '❤️' : '🖤';
 }
 
-function renderQuestion(){
+function renderBattleQuestion(){
   answered = false;
-  const lvl = levels[currentLevelIndex];
-  const q = lvl.questions[currentQIndex];
-
+  const q = activeQuiz[quizIdx];
   renderHearts();
-  const pct = (currentQIndex / lvl.questions.length) * 100;
-  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('battleProgress').style.width = (quizIdx/activeQuiz.length)*100 + '%';
+  document.getElementById('battleFeedback').classList.remove('show','ok','no');
+  document.getElementById('battleNextBtn').classList.remove('show');
+  document.getElementById('battleZh').textContent = q.zh;
 
-  document.getElementById('qTag').textContent = q.tag;
-  document.getElementById('qPrompt').textContent = q.prompt;
-  document.getElementById('qZh').textContent = q.zh;
+  const sEl = document.getElementById('battleSentence');
+  sEl.innerHTML = `${q.template[0]}<span class="blank" id="battleBlank">____</span>${q.template[1]}`;
 
-  const letters = ['A','B','C','D'];
-  const optsEl = document.getElementById('optionsList');
-  optsEl.innerHTML = '';
-  q.options.forEach((opt, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'option';
-    btn.innerHTML = `<span class="opt-letter">${letters[i]}</span><span>${opt}</span>`;
-    btn.onclick = () => selectAnswer(i);
-    optsEl.appendChild(btn);
+  const tagged = q.options.map(([word,isCorrect]) => ({word, isCorrect}));
+  const shuffled = shuffleArray(tagged);
+  currentOptions = shuffled;
+  currentCorrectIndex = shuffled.findIndex(o=>o.isCorrect);
+
+  const row = document.getElementById('battleOptions');
+  row.innerHTML = '';
+  shuffled.forEach((opt, i) => {
+    const card = document.createElement('div');
+    card.className = 'option-card';
+    card.innerHTML = `<div class="word tech-font">${opt.word}</div><button type="button" class="speak-mini">🔊</button>`;
+    card.querySelector('.speak-mini').onclick = (e) => { e.stopPropagation(); speak(opt.word, 0.7); };
+    card.onclick = () => selectBattleOption(i, card, q);
+    row.appendChild(card);
   });
-
-  document.getElementById('feedback').classList.remove('show');
-  document.getElementById('nextBtn').classList.remove('show');
 }
 
-function selectAnswer(i){
+function selectBattleOption(i, cardEl, q){
   if(answered) return;
   answered = true;
-  const lvl = levels[currentLevelIndex];
-  const q = lvl.questions[currentQIndex];
-  const opts = document.querySelectorAll('.option');
+  document.querySelectorAll('#battleOptions .option-card').forEach(c => c.classList.add('disabled'));
+  cardEl.classList.add(i===currentCorrectIndex ? 'correct' : 'wrong');
 
-  opts.forEach((btn, idx) => {
-    btn.classList.add('disabled');
-    if(idx === q.correct) btn.classList.add('correct');
-    if(idx === i && i !== q.correct) btn.classList.add('wrong');
-  });
+  const blank = document.getElementById('battleBlank');
+  blank.textContent = currentOptions[i].word;
+  blank.classList.add('filled');
 
-  const fb = document.getElementById('feedback');
-  const fbHead = document.getElementById('fbHead');
-  const fbBody = document.getElementById('fbBody');
+  const fb = document.getElementById('battleFeedback');
+  const verdict = document.getElementById('battleFbVerdict');
+  const body = document.getElementById('battleFbBody');
   fb.classList.add('show');
 
-  if(i === q.correct){
+  if(i === currentCorrectIndex){
     correctCount++;
-    totalScore += 10;
-    fbHead.textContent = '✅ 答對了！';
-    fbHead.className = 'fb-head ok';
+    fb.classList.add('ok');
+    verdict.className = 'fb-verdict ok';
+    verdict.textContent = '⚡ 正確！';
   } else {
     hearts--;
-    fbHead.textContent = '❌ 差一點點！';
-    fbHead.className = 'fb-head no';
+    fb.classList.add('no');
+    verdict.className = 'fb-verdict no';
+    verdict.textContent = '✕ 語意衝突！';
+    renderHearts();
   }
-  fbBody.textContent = q.exp;
-
-  document.getElementById('totalScore').textContent = totalScore;
+  body.textContent = q.exp;
+  document.getElementById('battleHearBtn').onclick = () => speak(q.fullSentence, 0.72);
+  document.getElementById('battleSlowBtn').onclick = () => speak(q.fullSentence, 0.5);
+  setTimeout(() => speak(q.fullSentence, 0.72), 300);
 
   if(hearts <= 0){
-    setTimeout(() => {
-      document.getElementById('optionsList').style.display = 'none';
-      document.getElementById('gameOverPanel').classList.add('show');
-    }, 400);
+    setTimeout(() => document.getElementById('failOverlay').classList.add('show'), 700);
     return;
   }
-
-  document.getElementById('nextBtn').classList.add('show');
+  document.getElementById('battleNextBtn').classList.add('show');
 }
 
-function nextQuestion(){
-  const lvl = levels[currentLevelIndex];
-  if(currentQIndex < lvl.questions.length - 1){
-    currentQIndex++;
-    renderQuestion();
-  } else {
-    finishLevel();
-  }
-}
+document.getElementById('battleNextBtn').onclick = () => {
+  if(quizIdx < activeQuiz.length-1){ quizIdx++; renderBattleQuestion(); }
+  else finishBattle();
+};
+document.getElementById('failRetryBtn').onclick = () => { document.getElementById('failOverlay').classList.remove('show'); startBattlePhase(); };
 
-function finishLevel(){
-  const lvl = levels[currentLevelIndex];
-  const total = lvl.questions.length;
+function finishBattle(){
+  const total = activeQuiz.length;
   let stars = 1;
   if(correctCount === total) stars = 3;
-  else if(correctCount >= Math.ceil(total * 0.6)) stars = 2;
+  else if(correctCount >= Math.ceil(total*0.6)) stars = 2;
 
-  if(stars > levelStars[currentLevelIndex]){
-    totalStars += (stars - levelStars[currentLevelIndex]);
-    levelStars[currentLevelIndex] = stars;
-  }
-  if(currentLevelIndex === unlockedUpTo && unlockedUpTo < levels.length - 1){
-    unlockedUpTo++;
+  const stage = currentLevel.stage, level = currentLevel.level;
+  const prev = stageProgress[stage.id][level.id];
+  if(!prev || stars > prev.stars) stageProgress[stage.id][level.id] = { stars };
+
+  level.words.forEach(w => totalVocabLearned.add(w.en));
+
+  document.getElementById('resultEmoji').textContent = level.boss ? '👑' : '🏆';
+  document.getElementById('resultTitle').textContent = level.name + (stars>0 ? ' 通關！' : '');
+  document.getElementById('resultStars').textContent = Array.from({length:3},(_,i)=> i<stars?'★':'☆').join('');
+  document.getElementById('resultLine').textContent = `答對 ${correctCount} / ${total} 題，學會 ${level.words.length} 個新單字`;
+
+  const grid = document.getElementById('resultCardGrid');
+  grid.innerHTML = '';
+  level.words.forEach(w => {
+    const c = document.createElement('div');
+    c.className = 'vocab-card';
+    c.innerHTML = `<div class="vc-word tech-font">${w.en}</div><div class="vc-meaning">${w.zh}</div>`;
+    grid.appendChild(c);
+  });
+
+  // unlock next stage if boss cleared
+  const idx = stages.findIndex(s => s.id === stage.id);
+  if(level.boss && idx < stages.length-1){
+    stages[idx+1].unlocked = true;
   }
 
-  document.getElementById('resultTitle').textContent = lvl.title + ' 過關！';
-  document.getElementById('resultStars').textContent = '★★★'.slice(0, 0) +
-    Array.from({length:3}, (_,i) => i < stars ? '★' : '☆').join('');
-  document.getElementById('resultLine').textContent =
-    `答對 ${correctCount} / ${total} 題，獲得 ${stars} 顆星`;
+  document.getElementById('retryLevelBtn').onclick = () => startBattlePhase();
+  document.getElementById('resultContinueBtn').onclick = () => { renderStage(currentStageIdx); showScreen('stageScreen'); };
 
   showScreen('resultScreen');
 }
 
 /* ---------------- INIT ---------------- */
-renderMap();
+renderTower();
 </script>
 </body>
 </html>
